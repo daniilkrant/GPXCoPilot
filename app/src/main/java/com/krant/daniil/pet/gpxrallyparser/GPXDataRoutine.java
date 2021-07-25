@@ -128,8 +128,6 @@ public class GPXDataRoutine {
         } else {
             direction = Turn.Direction.LEFT;
         }
-        Log.e("Turn.Direction", "P1: " + webMercatorLatFrom +
-                " P2: " + webMercatorLatTo + " Res: " + direction);
         return direction;
     }
 

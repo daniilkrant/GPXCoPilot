@@ -1,6 +1,7 @@
 plugins {
     id 'com.android.application'
     id 'com.google.android.libraries.mapsplatform.secrets-gradle-plugin'
+//    id 'com.google.secrets_gradle_plugin' version '0.5'
 }
 
 android {
@@ -8,7 +9,7 @@ android {
 
     defaultConfig {
         applicationId "com.krant.daniil.pet.gpxrallyparser"
-        minSdkVersion 26
+        minSdkVersion 23
         targetSdkVersion 30
         versionCode 1
         versionName "1.0"
@@ -36,4 +37,6 @@ dependencies {
 
     implementation 'com.github.ticofab:android-gpx-parser:2.0.0'
     implementation 'com.google.android.gms:play-services-maps:17.0.0'
+    implementation group: 'com.ibm.icu', name: 'icu4j', version: '51.1'
+
 }
