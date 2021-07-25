@@ -5,45 +5,51 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 
+import com.google.android.gms.maps.CameraUpdateFactory;
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MarkerOptions;
+
 import java.util.ArrayList;
 
 import io.ticofab.androidgpxparser.parser.domain.TrackPoint;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements OnMapReadyCallback {
+
+    private GoogleMap mMap;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        GPXParserRoutine gpxParser = new GPXParserRoutine(getApplicationContext());
+
+        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
+                .findFragmentById(R.id.map);
+        mapFragment.getMapAsync(this);
+
+        GPXDataRoutine gpxParser = new GPXDataRoutine(getApplicationContext());
         try {
             gpxParser.parseGpx();
-            ArrayList<TrackPoint> trackPoints = new ArrayList<>(gpxParser.getAllTrackPoints());
-
-//            for (int i = 0; i < trackPoints.size()-2; i++) {
-//                Log.e("TAG", "-------------------------------------------------------");
-//                Log.e("TAG", "Point: " + gpxParser.pointToString(trackPoints.get(i)));
-//                Log.e("TAG", "Point1: " + gpxParser.pointToString(trackPoints.get(i+1)));
-//                Log.e("TAG", "Distance: " + gpxParser.calcDistanceBtwPoints(trackPoints.get(i),
-//                        trackPoints.get(i+1)));
-//                Log.e("TAG", "Elevation: " + gpxParser.calcElevationBtwPoints(trackPoints.get(i),
-//                        trackPoints.get(i+1)));
-//                Log.e("TAG", "Angle: " + gpxParser.calcAngleBtwPoints(trackPoints.get(i),
-//                        trackPoints.get(i+1), trackPoints.get(i+2)));
-//                Log.e("TAG", "-------------------------------------------------------");
-//            }
-
-            for (int i = 1; i < trackPoints.size()-2; i++) {
-                Log.e("TAG", "-------------------------------------------------------");
-                Log.e("TAG", "Point " + (i-1) + ":" + gpxParser.pointToString(trackPoints.get(i-1)));
-                Log.e("TAG", "Point " + (i) + ":" + gpxParser.pointToString(trackPoints.get(i)));
-                Log.e("TAG", "Point " + (i+1) + ":" + gpxParser.pointToString(trackPoints.get(i+1)));
-                Log.e("TAG", "Angle: " + gpxParser.calcAngleBtwPoints(trackPoints.get(i-1),
-                        trackPoints.get(i), trackPoints.get(i+1)));
-                Log.e("TAG", "-------------------------------------------------------");
+            ArrayList<RallyPoint> rallyPoints = new ArrayList<>(gpxParser.getRallyPoints());
+            for (RallyPoint rp: rallyPoints) {
+                Log.e("Tag", rp.toString());
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    @Override
+    public void onMapReady(GoogleMap googleMap) {
+        mMap = googleMap;
+
+        // Add a marker in Sydney and move the camera
+        LatLng sydney = new LatLng(-34, 151);
+        mMap.addMarker(new MarkerOptions()
+                .position(sydney)
+                .title("Marker in Sydney"));
+        mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
     }
 }

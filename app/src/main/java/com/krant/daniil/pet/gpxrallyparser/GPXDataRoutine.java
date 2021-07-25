@@ -17,13 +17,13 @@ import io.ticofab.androidgpxparser.parser.domain.TrackPoint;
 import io.ticofab.androidgpxparser.parser.domain.TrackSegment;
 
 
-public class GPXParserRoutine {
+public class GPXDataRoutine {
 
     private Context mContext;
     GPXParser mParser = new GPXParser();
     Gpx mParsedGpx = null;
 
-    public GPXParserRoutine(Context context) {
+    public GPXDataRoutine(Context context) {
         this.mContext = context;
     }
 
@@ -91,40 +91,71 @@ public class GPXParserRoutine {
         return calcElevationBtwPoints(tp1.getElevation(), tp2.getElevation());
     }
 
-    public int calcElevationBtwPoints(double el1, double el2) {
-        return (int) (el1 - el2);
+    public int calcElevationBtwPoints(double from, double to) {
+        return (int) (from - to);
     }
 
-    public double calcAngleBtwPoints(TrackPoint tp1, TrackPoint tp2, TrackPoint tp3) {
-//        return calcAngleBtwPoints(tp1.getLatitude(), tp2.getLatitude(),
-//                tp1.getLongitude(), tp2.getLongitude());
-
-        return calcAngleBtwPoints(tp1.getLatitude(), tp1.getLongitude(),
+    public int calcTurnAngleBtwPoints(TrackPoint tp1, TrackPoint tp2, TrackPoint tp3) {
+        return calcTurnAngleBtwPoints(tp1.getLatitude(), tp1.getLongitude(),
                 tp2.getLatitude(), tp2.getLongitude(), tp3.getLatitude(), tp3.getLongitude());
     }
 
-//    public double calcAngleBtwPoints(double lat1, double lat2, double lon1, double lon2) {
-//        double latitude1 = Math.toRadians(lat1);
-//        double latitude2 = Math.toRadians(lat2);
-//        double longDiff = Math.toRadians(lon2 - lon1);
-//        double y = Math.sin(longDiff)*Math.cos(latitude2);
-//        double x = Math.cos(latitude1)*Math.sin(latitude2)-Math.sin(latitude1)*Math.cos(latitude2)*Math.cos(longDiff);
-//
-//        return (Math.toDegrees(Math.atan2(y, x))+360)%360;
-//    }
 
-    public double calcAngleBtwPoints(double lat1, double lon1, double lat2, double lon2,
-                                     double lat3, double lon3) {
+    public int calcTurnAngleBtwPoints(double lat1, double lon1, double lat2, double lon2,
+                                         double lat3, double lon3) {
         double angle = 0;
         double angleAbs;
         angle = Math.toDegrees(Math.atan2(lat3 - lat2, lon3 - lon2) - Math.atan2(lat1 - lat2, lon1 - lon2));
         angleAbs = Math.abs(angle);
         if (angleAbs > 180) {
-            return 360 - angleAbs;
+            return (int) (360 - angleAbs);
         }
         else {
-            return angleAbs;
+            return (int) angleAbs;
         }
     }
+
+    public Turn.Direction calcTurnDirectionBtwPoints(TrackPoint tp1, TrackPoint tp2) {
+        return calcTurnDirectionBtwPoints(tp1.getLatitude(), tp2.getLatitude());
+    }
+
+    public Turn.Direction calcTurnDirectionBtwPoints(double from, double to) {
+        Turn.Direction direction;
+        double webMercatorLatFrom = WebMercatorConvertor.latitudeToY(from);
+        double webMercatorLatTo = WebMercatorConvertor.latitudeToY(to);
+        if (webMercatorLatFrom < webMercatorLatTo) {
+            direction =  Turn.Direction.RIGHT;
+        } else {
+            direction = Turn.Direction.LEFT;
+        }
+        Log.e("Turn.Direction", "P1: " + webMercatorLatFrom +
+                " P2: " + webMercatorLatTo + " Res: " + direction);
+        return direction;
+    }
+
+    public List<RallyPoint> getRallyPoints() {
+        ArrayList<RallyPoint> ret = new ArrayList<>();
+        ArrayList<TrackPoint> trackPoints = new ArrayList<>(getAllTrackPoints());
+
+        for (int i = 1; i < trackPoints.size()-2; i++) {
+            int pointDistance = calcDistanceBtwPoints(trackPoints.get(i),
+                    trackPoints.get(i + 1));
+            int pointElevation = calcElevationBtwPoints(trackPoints.get(i),
+                    trackPoints.get(i + 1));
+            int turnAngle = calcTurnAngleBtwPoints(trackPoints.get(i-1),
+                    trackPoints.get(i), trackPoints.get(i+1));
+            Turn.Direction turnDirection = calcTurnDirectionBtwPoints(trackPoints.get(i),
+                    trackPoints.get(i+1));
+
+            RallyPoint rallyPoint = new RallyPoint(i, trackPoints.get(i).getLatitude(),
+                    trackPoints.get(i).getLongitude(), pointDistance, pointElevation,
+                    new Turn(turnAngle, turnDirection));
+            ret.add(rallyPoint);
+        }
+
+
+        return ret;
+    }
+
 
 }
