@@ -9,12 +9,10 @@ import com.google.android.material.tabs.TabLayout;
 import androidx.viewpager.widget.ViewPager;
 import androidx.appcompat.app.AppCompatActivity;
 
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 
 import com.krant.daniil.pet.gpxrallyparser.databinding.ActivityMainBinding;
-import com.krant.daniil.pet.gpxrallyparser.ui.main.SectionsPagerAdapter;
+import com.krant.daniil.pet.gpxrallyparser.ui.main.fragment.SectionsPagerAdapter;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -26,6 +24,8 @@ public class MainActivity extends AppCompatActivity {
 
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
+
+        GPXDataRoutine.setContext(getApplicationContext());
 
         SectionsPagerAdapter sectionsPagerAdapter = new SectionsPagerAdapter(this, getSupportFragmentManager());
         ViewPager viewPager = binding.viewPager;

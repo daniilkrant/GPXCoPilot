@@ -1,4 +1,4 @@
-package com.krant.daniil.pet.gpxrallyparser.ui.main;
+package com.krant.daniil.pet.gpxrallyparser.ui.main.fragment.map;
 
 import android.os.Bundle;
 import android.speech.tts.TextToSpeech;
@@ -11,7 +11,6 @@ import androidx.fragment.app.Fragment;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
@@ -33,14 +32,12 @@ public class MapViewFragment extends Fragment implements OnMapReadyCallback,
     private GoogleMap mMap;
     GPXDataRoutine mGpxParser;
     TextToSpeech mTextToSpeech;
-    LexicalProcessor mLexicalProcessor;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_map, container, false);
 
-        mGpxParser = new GPXDataRoutine(getContext());
-        mLexicalProcessor = new LexicalProcessor(getContext());
+        mGpxParser = GPXDataRoutine.getInstance();
         mTextToSpeech = new TextToSpeech(getContext(), this);
 
         SupportMapFragment mapFragment =
@@ -57,7 +54,7 @@ public class MapViewFragment extends Fragment implements OnMapReadyCallback,
 
         try {
             mGpxParser.parseGpx();
-            ArrayList<RallyPoint> rallyPoints = new ArrayList<>(mGpxParser.getRallyPoints());
+            ArrayList<RallyPoint> rallyPoints = new ArrayList<>(mGpxParser.getmRallyPoints());
             addMarkersToMap(rallyPoints);
 
             mMap.setOnMarkerClickListener(this);
@@ -103,7 +100,7 @@ public class MapViewFragment extends Fragment implements OnMapReadyCallback,
     private void addMarkersToMap(ArrayList<RallyPoint> rallyPoints) {
         for (RallyPoint rp: rallyPoints) {
             LatLng point = new LatLng(rp.getLatitude(), rp.getLongitude());
-            String title = addIdToMarkerTitle(mLexicalProcessor.getHint(rp), rp.getId());
+            String title = addIdToMarkerTitle(rp.getHint(), rp.getId());
             mMap.addMarker(new MarkerOptions()
                     .position(point)
                     .title(title));

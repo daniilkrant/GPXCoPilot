@@ -44,7 +44,7 @@ public class Turn {
                 '}';
     }
 
-    enum Direction {
+    public enum Direction {
         LEFT,
         RIGHT
     }

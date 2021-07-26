@@ -1,4 +1,4 @@
-package com.krant.daniil.pet.gpxrallyparser.ui.main;
+package com.krant.daniil.pet.gpxrallyparser.ui.main.fragment;
 
 import android.content.Context;
 
@@ -9,11 +9,9 @@ import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentPagerAdapter;
 
 import com.krant.daniil.pet.gpxrallyparser.R;
+import com.krant.daniil.pet.gpxrallyparser.ui.main.fragment.list.ListViewFragment;
+import com.krant.daniil.pet.gpxrallyparser.ui.main.fragment.map.MapViewFragment;
 
-/**
- * A [FragmentPagerAdapter] that returns a fragment corresponding to
- * one of the sections/tabs/pages.
- */
 public class SectionsPagerAdapter extends FragmentPagerAdapter {
 
     @StringRes
@@ -27,9 +25,11 @@ public class SectionsPagerAdapter extends FragmentPagerAdapter {
 
     @Override
     public Fragment getItem(int position) {
-        // getItem is called to instantiate the fragment for the given page.
-        // Return a PlaceholderFragment (defined as a static inner class below).
-        return new MapViewFragment();
+        if (position == 0) {
+            return new ListViewFragment();
+        } else {
+            return new MapViewFragment();
+        }
     }
 
     @Nullable

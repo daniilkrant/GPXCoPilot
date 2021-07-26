@@ -8,6 +8,7 @@ public class RallyPoint {
     private final int mDistance;
     private final int mElevation;
     private final Turn mTurn;
+    private String mHint;
 
 
     public RallyPoint(int id, double latitude, double longitude, int distance, int elevation, Turn turn) {
@@ -45,6 +46,14 @@ public class RallyPoint {
 
     public int getId() {
         return mId;
+    }
+
+    public String getHint() {
+        return mHint;
+    }
+
+    public void setHint(String hint) {
+        this.mHint = hint;
     }
 
     @Override

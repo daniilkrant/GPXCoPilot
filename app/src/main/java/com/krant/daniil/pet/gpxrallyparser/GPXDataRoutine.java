@@ -19,12 +19,26 @@ import io.ticofab.androidgpxparser.parser.domain.TrackSegment;
 
 public class GPXDataRoutine {
 
-    private Context mContext;
-    GPXParser mParser = new GPXParser();
-    Gpx mParsedGpx = null;
+    static GPXDataRoutine instance;
+    private static Context mContext;
+    private final GPXParser mParser = new GPXParser();
+    private Gpx mParsedGpx;
+    private List<RallyPoint> mRallyPoints;
+    private LexicalProcessor mLexicalProcessor;
 
-    public GPXDataRoutine(Context context) {
-        this.mContext = context;
+    private GPXDataRoutine() {
+        mLexicalProcessor = new LexicalProcessor(mContext);
+    }
+
+    public static synchronized GPXDataRoutine getInstance() {
+        if (instance == null) {
+            instance = new GPXDataRoutine();
+        }
+        return instance;
+    }
+
+    public static void setContext(Context context) {
+        mContext = context;
     }
 
     public void parseGpx() {
@@ -36,7 +50,10 @@ public class GPXDataRoutine {
         }
     }
 
-    public List<RallyPoint> getRallyPoints() {
+    public List<RallyPoint> getmRallyPoints() {
+        if (mRallyPoints != null) {
+            return mRallyPoints;
+        }
         ArrayList<RallyPoint> ret = new ArrayList<>();
         ArrayList<TrackPoint> trackPoints = new ArrayList<>(getAllTrackPoints());
 
@@ -53,10 +70,12 @@ public class GPXDataRoutine {
             RallyPoint rallyPoint = new RallyPoint(i, trackPoints.get(i).getLatitude(),
                     trackPoints.get(i).getLongitude(), pointDistance, pointElevation,
                     new Turn(turnAngle, turnDirection));
+            rallyPoint.setHint(mLexicalProcessor.getHint(rallyPoint));
             ret.add(rallyPoint);
         }
 
-        return ret;
+        mRallyPoints = ret;
+        return mRallyPoints;
     }
 
     private List<TrackPoint> getAllTrackPoints() {
