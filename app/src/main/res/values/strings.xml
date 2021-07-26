@@ -10,6 +10,8 @@
     <string name="tts_not_ready">TTS not ready</string>
     <string name="activity_title">Your track</string>
     <string name="file_not_found">File cannot be found</string>
-    <string name="visual_open_hint">Press here and open your .gpx file, also, you can use floating button</string>
+    <string name="visual_open_hint">Choose a .gpx file and get a personal co-pilot in your phone!</string>
     <string name="file_not_parsed">File cannot be parsed</string>
+    <string name="author">Created by Daniil Krant</string>
+    <string name="choose_file">Choose File</string>
 </resources>

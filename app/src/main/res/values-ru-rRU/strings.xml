@@ -9,6 +9,8 @@
     <string name="tts_not_ready">TTS не готов</string>
     <string name="activity_title">Маршрут</string>
     <string name="file_not_found">Файл не найден</string>
-    <string name="visual_open_hint">Нажмите сюда, или на кнопку снизу, для того чтобы выбрать .gpx файл</string>
+    <string name="visual_open_hint">Выберите файл с маршрутом .gpx и получите персонального штурмана у себя в телефоне!</string>
     <string name="file_not_parsed">Не удалось считать файл</string>
+    <string name="author">Создано by Daniil Krant</string>
+    <string name="choose_file">Выбрать файл</string>
 </resources>

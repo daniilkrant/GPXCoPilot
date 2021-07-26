@@ -12,7 +12,8 @@
         android:id="@+id/app_bar_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:theme="@style/Theme.GPXRallyParser.AppBarOverlay">
+        android:theme="@style/Theme.GPXRallyParser.AppBarOverlay"
+        android:visibility="gone">
 
         <TextView
             android:id="@+id/title"
@@ -40,37 +41,66 @@
         android:visibility="gone"
         app:layout_behavior="@string/appbar_scrolling_view_behavior" />
 
-    <RelativeLayout
+    <FrameLayout
         android:id="@+id/open_hint_layout"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_below="@id/app_bar_layout"
-        android:orientation="vertical">
+        android:layout_height="match_parent">
 
         <ImageView
-            android:layout_width="75dp"
-            android:layout_height="75dp"
-            android:layout_centerHorizontal="true"
-            android:layout_above="@id/center"
-            android:src="@drawable/open_file"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:scaleType="centerCrop"
+            android:src="@drawable/bkg_image"
             android:visibility="visible" />
 
-        <FrameLayout
-            android:id="@+id/center"
-            android:layout_width="1dp"
-            android:layout_height="1dp"
-            android:layout_centerInParent="true"/>
-
-        <TextView
+        <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/center"
-            android:gravity="center"
-            android:text="@string/visual_open_hint"
-            android:textSize="24sp" />
+            android:layout_height="match_parent">
+
+            <FrameLayout
+                android:layout_width="1dp"
+                android:layout_height="1dp"
+                android:id="@+id/center"
+                android:layout_centerInParent="true"/>
+
+            <TextView
+                android:id="@+id/open_hint_text"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:layout_below="@id/center"
+                android:text="@string/visual_open_hint"
+                android:textSize="24sp"
+                android:textColor="@color/white"
+                android:layout_marginStart="16dp"
+                android:layout_marginEnd="16dp"/>
+
+            <Button
+                android:id="@+id/choose_file_button"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="20dp"
+                android:layout_marginEnd="20dp"
+                android:layout_marginTop="100dp"
+                android:layout_below="@id/open_hint_text"
+                android:background="@drawable/rounded_button"
+                android:text = "@string/choose_file"
+                />
+
+            <TextView
+                android:id="@+id/author"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:layout_alignParentBottom="true"
+                android:text="@string/author"
+                android:textSize="16sp"
+                android:textColor="@color/white"
+                android:layout_margin="8dp"/>
+        </RelativeLayout>
 
 
-    </RelativeLayout>
+    </FrameLayout>
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/fab"
@@ -80,5 +110,6 @@
         android:layout_alignParentBottom="true"
         android:layout_gravity="bottom|end"
         android:layout_margin="@dimen/fab_margin"
-        app:srcCompat="@android:drawable/ic_input_get" />
+        app:srcCompat="@android:drawable/ic_input_get"
+        android:visibility="gone"/>
 </RelativeLayout>

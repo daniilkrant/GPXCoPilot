@@ -3,9 +3,12 @@ package com.krant.daniil.pet.gpxrallyparser;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
-import android.widget.RelativeLayout;
+import android.widget.Button;
+import android.widget.FrameLayout;
 
+import com.google.android.material.appbar.AppBarLayout;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.tabs.TabLayout;
@@ -24,24 +27,33 @@ public class MainActivity extends AppCompatActivity {
     private ActivityMainBinding binding;
     private ViewPager mViewPager;
     private TabLayout mTabs;
-    private RelativeLayout mOpenFileHintLayout;
+    private FrameLayout mOpenFileHintLayout;
+    private FloatingActionButton mFab;
+    private AppBarLayout mAppBarLayout;
     private static final int PICKFILE_RESULT_CODE = 42;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+    }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
         GPXDataRoutine.setContext(getApplicationContext());
-        FloatingActionButton fab = binding.fab;
+        mFab = binding.fab;
         mViewPager = binding.viewPager;
         mTabs = binding.tabs;
         mOpenFileHintLayout = binding.openHintLayout;
+        mAppBarLayout = binding.appBarLayout;
+        Button mChooseFileButton = binding.chooseFileButton;
 
         mOpenFileHintLayout.setOnClickListener(new OpenFileClickListener());
-        fab.setOnClickListener(new OpenFileClickListener());
+        mChooseFileButton.setOnClickListener(new OpenFileClickListener());
+        mFab.setOnClickListener(new OpenFileClickListener());
     }
 
     @Override
@@ -81,6 +93,8 @@ public class MainActivity extends AppCompatActivity {
         mTabs.setupWithViewPager(mViewPager);
         mTabs.setVisibility(View.VISIBLE);
         mViewPager.setVisibility(View.VISIBLE);
+        mFab.setVisibility(View.VISIBLE);
+        mAppBarLayout.setVisibility(View.VISIBLE);
     }
 
     class OpenFileClickListener implements View.OnClickListener {
