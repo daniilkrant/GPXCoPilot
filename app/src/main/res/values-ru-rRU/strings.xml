@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">GPXRallyParser</string>
+    <string name="elevation_up">вверх</string>
+    <string name="elevation_down">вниз</string>
+    <string name="turn_direction_right">право</string>
+    <string name="turn_direction_left">лево</string>
+</resources>

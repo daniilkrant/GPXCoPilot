@@ -1,3 +1,7 @@
 <resources>
     <string name="app_name">GPXRallyParser</string>
+    <string name="elevation_up">up</string>
+    <string name="elevation_down">down</string>
+    <string name="turn_direction_right">right</string>
+    <string name="turn_direction_left">left</string>
 </resources>

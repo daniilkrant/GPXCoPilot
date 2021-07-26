@@ -43,6 +43,10 @@ public class RallyPoint {
         return mTurn;
     }
 
+    public int getId() {
+        return mId;
+    }
+
     @Override
     public String toString() {
         return "RallyPoint{" +
