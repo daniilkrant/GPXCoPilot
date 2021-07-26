@@ -53,8 +53,7 @@
                 android:padding="2dp"
                 android:text="48.732875464484096, -3.444574708119035"
                 android:textColor="@color/gray"
-                android:textSize="12sp"
-                android:autoSizeTextType="uniform" />
+                android:autoSizeTextType="uniform"/>
 
             <TextView
                 android:id="@+id/turn_hint"

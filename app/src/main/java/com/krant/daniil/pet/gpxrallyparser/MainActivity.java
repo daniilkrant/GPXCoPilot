@@ -7,12 +7,14 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.FrameLayout;
+import android.widget.TextView;
 
 import com.google.android.material.appbar.AppBarLayout;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.tabs.TabLayout;
 
+import androidx.annotation.Nullable;
 import androidx.viewpager.widget.ViewPager;
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -35,11 +37,6 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
@@ -49,11 +46,25 @@ public class MainActivity extends AppCompatActivity {
         mTabs = binding.tabs;
         mOpenFileHintLayout = binding.openHintLayout;
         mAppBarLayout = binding.appBarLayout;
-        Button mChooseFileButton = binding.chooseFileButton;
+        Button chooseFileButton = binding.chooseFileButton;
+        TextView authorText = binding.author;
 
         mOpenFileHintLayout.setOnClickListener(new OpenFileClickListener());
-        mChooseFileButton.setOnClickListener(new OpenFileClickListener());
+        chooseFileButton.setOnClickListener(new OpenFileClickListener());
         mFab.setOnClickListener(new OpenFileClickListener());
+        authorText.setOnClickListener(view -> {
+            Intent emailIntent = new Intent(android.content.Intent.ACTION_SEND);
+            emailIntent.setType("plain/text");
+
+            emailIntent.putExtra(android.content.Intent.EXTRA_EMAIL, new String[]{"danbiil988@gmail.com"});
+            emailIntent.putExtra(android.content.Intent.EXTRA_SUBJECT, "GPX4Rally");
+            startActivity(Intent.createChooser(emailIntent, "Contact me"));
+        });
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
     }
 
     @Override

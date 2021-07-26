@@ -35,7 +35,7 @@ public class ListViewItemHolder extends RecyclerView.ViewHolder {
 
     public void fillCard(RallyPoint rallyPoint) {
         mTurnId.setText(Integer.toString(rallyPoint.getId()));
-        mTurnCoord.setText(rallyPoint.getLatitude() + " " + rallyPoint.getLongitude());
+        mTurnCoord.setText(rallyPoint.getLatitude() + ", " + rallyPoint.getLongitude());
         mTurnHint.setText(rallyPoint.getHint());
         if (rallyPoint.getTurn().getDirection() == Turn.Direction.RIGHT) {
             mTurnDirection.setImageDrawable(ContextCompat.getDrawable(mContext, R.drawable.right_turn));
