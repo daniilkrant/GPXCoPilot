@@ -1,7 +1,9 @@
 package com.krant.daniil.pet.gpxrallyparser;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -14,7 +16,6 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.tabs.TabLayout;
 
-import androidx.annotation.Nullable;
 import androidx.viewpager.widget.ViewPager;
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -32,11 +33,13 @@ public class MainActivity extends AppCompatActivity {
     private FrameLayout mOpenFileHintLayout;
     private FloatingActionButton mFab;
     private AppBarLayout mAppBarLayout;
+
     private static final int PICKFILE_RESULT_CODE = 42;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Log.e("f", "------------");
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
@@ -73,23 +76,22 @@ public class MainActivity extends AppCompatActivity {
         mOpenFileHintLayout.setVisibility(View.GONE);
         if (requestCode == PICKFILE_RESULT_CODE && resultCode == RESULT_OK) {
             Uri filePath = data.getData();
-            parseFile(filePath);
+            new ParseTask(filePath).execute();
         }
     }
 
-    private void parseFile(Uri fileUri) {
+    private boolean parseFile(Uri fileUri) {
         InputStream fileInputStream;
         try {
             fileInputStream = getApplicationContext().getContentResolver().openInputStream(fileUri);
             if (GPXDataRoutine.getInstance().parseGpx(fileInputStream)) {
-                startUI();
-            } else {
-                showError(getApplicationContext().getString(R.string.file_not_parsed));
+                return true;
             }
         } catch (FileNotFoundException e) {
             showError(getApplicationContext().getString(R.string.file_not_found));
             e.printStackTrace();
         }
+        return false;
     }
 
     private void showError(String error) {
@@ -97,15 +99,8 @@ public class MainActivity extends AppCompatActivity {
                 Snackbar.LENGTH_LONG).show();
     }
 
-    private void startUI() {
-        SectionsPagerAdapter sectionsPagerAdapter = new SectionsPagerAdapter(
-                this, getSupportFragmentManager());
-        mViewPager.setAdapter(sectionsPagerAdapter);
-        mTabs.setupWithViewPager(mViewPager);
-        mTabs.setVisibility(View.VISIBLE);
-        mViewPager.setVisibility(View.VISIBLE);
-        mFab.setVisibility(View.VISIBLE);
-        mAppBarLayout.setVisibility(View.VISIBLE);
+    private void showUI() {
+        mOpenFileHintLayout.setVisibility(View.GONE);
     }
 
     class OpenFileClickListener implements View.OnClickListener {
@@ -115,6 +110,48 @@ public class MainActivity extends AppCompatActivity {
             chooseFile.setType("*/*");
             chooseFile = Intent.createChooser(chooseFile, "Choose a file");
             startActivityForResult(chooseFile, PICKFILE_RESULT_CODE);
+        }
+    }
+
+    class ParseTask extends AsyncTask<Void, Void, Boolean> {
+        Uri mFilePath;
+        ProgressDialog mProgress;
+        SectionsPagerAdapter mSectionsPagerAdapter;
+
+        public ParseTask(Uri filePath) {
+            mFilePath = filePath;
+            mProgress = new ProgressDialog(MainActivity.this);
+        }
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            mProgress.setTitle("Loading");
+            mProgress.setMessage("Wait while loading...");
+            mProgress.setCancelable(false);
+            mProgress.show();
+        }
+
+        @Override
+        protected Boolean doInBackground(Void... voids) {
+            boolean res = parseFile(mFilePath);
+            if (res) {
+                mSectionsPagerAdapter = new SectionsPagerAdapter(
+                        MainActivity.this, getSupportFragmentManager());
+            }
+            return res;
+        }
+
+        @Override
+        protected void onPostExecute(Boolean result) {
+            if (result) {
+                mViewPager.setAdapter(mSectionsPagerAdapter);
+                mTabs.setupWithViewPager(mViewPager);
+                showUI();
+            } else {
+                showError(getApplicationContext().getString(R.string.file_not_parsed));
+            }
+            mProgress.cancel();
         }
     }
 
