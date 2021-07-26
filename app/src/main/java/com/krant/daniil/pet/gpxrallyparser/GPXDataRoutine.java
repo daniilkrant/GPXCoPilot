@@ -24,7 +24,7 @@ public class GPXDataRoutine {
     private final GPXParser mParser = new GPXParser();
     private Gpx mParsedGpx;
     private List<RallyPoint> mRallyPoints;
-    private LexicalProcessor mLexicalProcessor;
+    private final LexicalProcessor mLexicalProcessor;
 
     private GPXDataRoutine() {
         mLexicalProcessor = new LexicalProcessor(mContext);
@@ -55,29 +55,33 @@ public class GPXDataRoutine {
         if (mRallyPoints != null) {
             return mRallyPoints;
         }
-        ArrayList<RallyPoint> ret = new ArrayList<>();
+        mRallyPoints = new ArrayList<>();
         ArrayList<TrackPoint> trackPoints = new ArrayList<>(getAllTrackPoints());
 
-        for (int i = 1; i < trackPoints.size()-2; i++) {
+        for (int i = 1; i < trackPoints.size() - 2; i++) {
             int pointDistance = calcDistanceBtwPoints(trackPoints.get(i),
                     trackPoints.get(i + 1));
             int pointElevation = calcElevationBtwPoints(trackPoints.get(i),
                     trackPoints.get(i + 1));
-            int turnAngle = calcTurnAngleBtwPoints(trackPoints.get(i-1),
-                    trackPoints.get(i), trackPoints.get(i+1));
+            int turnAngle = calcTurnAngleBtwPoints(trackPoints.get(i - 1),
+                    trackPoints.get(i), trackPoints.get(i + 1));
             Turn.Direction turnDirection = calcTurnDirectionBtwPoints(trackPoints.get(i),
-                    trackPoints.get(i+1));
+                    trackPoints.get(i + 1));
 
             RallyPoint rallyPoint = new RallyPoint(i, trackPoints.get(i).getLatitude(),
                     trackPoints.get(i).getLongitude(), pointDistance, pointElevation,
                     new Turn(turnAngle, turnDirection));
             rallyPoint.setHint(mLexicalProcessor.getHint(rallyPoint));
-            ret.add(rallyPoint);
+            mRallyPoints.add(rallyPoint);
         }
 
-        mRallyPoints = ret;
         return mRallyPoints;
     }
+
+    public void cleanRallyPoints() {
+        mRallyPoints = null;
+    }
+
 
     private List<TrackPoint> getAllTrackPoints() {
         ArrayList<TrackPoint> ret = new ArrayList<>();
@@ -102,7 +106,7 @@ public class GPXDataRoutine {
     }
 
     private int calcDistanceBtwPoints(double lat1, double lat2, double lon1,
-                                     double lon2, double el1, double el2) {
+                                      double lon2, double el1, double el2) {
         final int R = 6371; // Radius of the earth
 
         double latDistance = Math.toRadians(lat2 - lat1);
@@ -134,15 +138,14 @@ public class GPXDataRoutine {
     }
 
     private int calcTurnAngleBtwPoints(double lat1, double lon1, double lat2, double lon2,
-                                         double lat3, double lon3) {
+                                       double lat3, double lon3) {
         double angle = 0;
         double angleAbs;
         angle = Math.toDegrees(Math.atan2(lat3 - lat2, lon3 - lon2) - Math.atan2(lat1 - lat2, lon1 - lon2));
         angleAbs = Math.abs(angle);
         if (angleAbs > 180) {
             return (int) (360 - angleAbs);
-        }
-        else {
+        } else {
             return (int) angleAbs;
         }
     }
@@ -156,7 +159,7 @@ public class GPXDataRoutine {
         double webMercatorLatFrom = WebMercatorConvertor.latitudeToY(from);
         double webMercatorLatTo = WebMercatorConvertor.latitudeToY(to);
         if (webMercatorLatFrom < webMercatorLatTo) {
-            direction =  Turn.Direction.RIGHT;
+            direction = Turn.Direction.RIGHT;
         } else {
             direction = Turn.Direction.LEFT;
         }

@@ -8,6 +8,7 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentPagerAdapter;
 
+import com.krant.daniil.pet.gpxrallyparser.GPXDataRoutine;
 import com.krant.daniil.pet.gpxrallyparser.R;
 import com.krant.daniil.pet.gpxrallyparser.ui.main.fragment.list.ListViewFragment;
 import com.krant.daniil.pet.gpxrallyparser.ui.main.fragment.map.MapViewFragment;
@@ -21,6 +22,7 @@ public class SectionsPagerAdapter extends FragmentPagerAdapter {
     public SectionsPagerAdapter(Context context, FragmentManager fm) {
         super(fm);
         mContext = context;
+        GPXDataRoutine.getInstance().cleanRallyPoints();
     }
 
     @Override

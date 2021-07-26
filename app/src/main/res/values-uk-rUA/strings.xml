@@ -13,4 +13,6 @@
     <string name="file_not_parsed">Не вдалось зчитати файл</string>
     <string name="author">Створено by Daniil Krant</string>
     <string name="choose_file">Обрати файл</string>
+    <string name="loading_title">Завантаження</string>
+    <string name="loading_text">Будь ласка зачекайте...</string>
 </resources>

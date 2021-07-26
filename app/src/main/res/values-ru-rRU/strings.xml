@@ -13,4 +13,6 @@
     <string name="file_not_parsed">Не удалось считать файл</string>
     <string name="author">Создано by Daniil Krant</string>
     <string name="choose_file">Выбрать файл</string>
+    <string name="loading_title">Загрузка</string>
+    <string name="loading_text">Пожалуйста подождите...</string>
 </resources>

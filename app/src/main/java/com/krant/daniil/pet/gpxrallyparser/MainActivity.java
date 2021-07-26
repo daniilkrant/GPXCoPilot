@@ -39,7 +39,6 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Log.e("f", "------------");
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
@@ -101,6 +100,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void showUI() {
         mOpenFileHintLayout.setVisibility(View.GONE);
+        mFab.setVisibility(View.VISIBLE);
     }
 
     class OpenFileClickListener implements View.OnClickListener {
@@ -126,8 +126,8 @@ public class MainActivity extends AppCompatActivity {
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
-            mProgress.setTitle("Loading");
-            mProgress.setMessage("Wait while loading...");
+            mProgress.setTitle(getApplicationContext().getString(R.string.loading_title));
+            mProgress.setMessage(getApplicationContext().getString(R.string.loading_text));
             mProgress.setCancelable(false);
             mProgress.show();
         }

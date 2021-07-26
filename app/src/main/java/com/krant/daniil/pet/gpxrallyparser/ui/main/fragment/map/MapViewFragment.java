@@ -12,6 +12,7 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
@@ -62,7 +63,7 @@ public class MapViewFragment extends Fragment implements OnMapReadyCallback,
         mMap.setOnMarkerClickListener(this);
         mMap.moveCamera(CameraUpdateFactory.
                 newLatLngZoom(new LatLng(rallyPoints.get(0).getLatitude(),
-                        rallyPoints.get(0).getLongitude()), 10));
+                        rallyPoints.get(0).getLongitude()), 18));
 
     }
 
@@ -88,12 +89,17 @@ public class MapViewFragment extends Fragment implements OnMapReadyCallback,
     }
 
     private void addMarkersToMap(ArrayList<RallyPoint> rallyPoints) {
+        mMap.clear();
+        boolean isFirst = true;
         for (RallyPoint rp : rallyPoints) {
             LatLng point = new LatLng(rp.getLatitude(), rp.getLongitude());
             String title = addIdToMarkerTitle(rp.getHint(), rp.getId());
             Marker marker = mMap.addMarker(new MarkerOptions()
                     .position(point)
-                    .title(title));
+                    .title(title)
+                    .icon( isFirst ? BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN)
+                            : BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED)));
+            isFirst = false;
             marker.setTag(rp.getId());
         }
     }
