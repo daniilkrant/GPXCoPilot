@@ -50,7 +50,7 @@ public class GPXDataRoutine {
         }
     }
 
-    public List<RallyPoint> getmRallyPoints() {
+    public List<RallyPoint> getRallyPoints() {
         if (mRallyPoints != null) {
             return mRallyPoints;
         }

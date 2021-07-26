@@ -34,6 +34,12 @@ public class RallyPointsListAdapter extends RecyclerView.Adapter<ListViewItemHol
     @Override
     public ListViewItemHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext()).inflate(viewType, parent, false);
+        view.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+            }
+        });
         return new ListViewItemHolder(view, mContext);
     }
 

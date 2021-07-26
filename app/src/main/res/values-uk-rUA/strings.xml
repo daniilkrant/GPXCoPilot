@@ -7,4 +7,5 @@
     <string name="turn_direction_left">ліво</string>
     <string name="tab_text_1">Список</string>
     <string name="tab_text_2">Мапа</string>
+    <string name="tts_not_ready">TTS не ініціалізовано</string>
 </resources>

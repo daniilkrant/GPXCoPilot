@@ -26,7 +26,7 @@ public class ListViewFragment extends Fragment {
         RecyclerView recyclerView = view.findViewById(R.id.recyclerview);
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(view.getContext()));
-        recyclerView.setAdapter(new RallyPointsListAdapter(gpxDataRoutine.getmRallyPoints(),
+        recyclerView.setAdapter(new RallyPointsListAdapter(gpxDataRoutine.getRallyPoints(),
                 getContext()));
 
         return view;

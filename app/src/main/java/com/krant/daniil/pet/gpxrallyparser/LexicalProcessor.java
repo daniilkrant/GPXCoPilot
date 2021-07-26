@@ -9,7 +9,7 @@ import java.util.Locale;
 public class LexicalProcessor {
 
     private static final String DELIM = ", ";
-    private Context mContext;
+    private final Context mContext;
 
     public LexicalProcessor(Context mContext) {
         this.mContext = mContext;

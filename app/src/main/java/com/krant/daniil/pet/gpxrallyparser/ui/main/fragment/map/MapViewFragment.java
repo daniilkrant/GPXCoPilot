@@ -2,7 +2,6 @@ package com.krant.daniil.pet.gpxrallyparser.ui.main.fragment.map;
 
 import android.os.Bundle;
 import android.speech.tts.TextToSpeech;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,29 +15,30 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.material.snackbar.Snackbar;
 import com.krant.daniil.pet.gpxrallyparser.GPXDataRoutine;
-import com.krant.daniil.pet.gpxrallyparser.LexicalProcessor;
 import com.krant.daniil.pet.gpxrallyparser.R;
 import com.krant.daniil.pet.gpxrallyparser.RallyPoint;
+import com.krant.daniil.pet.gpxrallyparser.SpeechProcessor;
 
 import java.util.ArrayList;
-import java.util.Locale;
 
 public class MapViewFragment extends Fragment implements OnMapReadyCallback,
-        TextToSpeech.OnInitListener, GoogleMap.OnMarkerClickListener {
+        GoogleMap.OnMarkerClickListener {
 
     private final static String TITLE_ID_DELIM = ": ";
 
     private GoogleMap mMap;
-    GPXDataRoutine mGpxParser;
-    TextToSpeech mTextToSpeech;
+    private GPXDataRoutine mGpxParser;
+    private SpeechProcessor mSpeechProcessor;
+    private View rootView;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View rootView = inflater.inflate(R.layout.fragment_map, container, false);
+        rootView = inflater.inflate(R.layout.fragment_map, container, false);
 
         mGpxParser = GPXDataRoutine.getInstance();
-        mTextToSpeech = new TextToSpeech(getContext(), this);
+        mSpeechProcessor = new SpeechProcessor(getContext());
 
         SupportMapFragment mapFragment =
                 (SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.map);
@@ -54,33 +54,23 @@ public class MapViewFragment extends Fragment implements OnMapReadyCallback,
 
         try {
             mGpxParser.parseGpx();
-            ArrayList<RallyPoint> rallyPoints = new ArrayList<>(mGpxParser.getmRallyPoints());
+            ArrayList<RallyPoint> rallyPoints = new ArrayList<>(mGpxParser.getRallyPoints());
             addMarkersToMap(rallyPoints);
 
             mMap.setOnMarkerClickListener(this);
             mMap.moveCamera(CameraUpdateFactory.
                     newLatLngZoom(new LatLng(rallyPoints.get(0).getLatitude(),
-                            rallyPoints.get(0).getLongitude()), 20));
+                            rallyPoints.get(0).getLongitude()), 10));
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
-    @Override
-    public void onInit(int i) {
-        if (i == TextToSpeech.SUCCESS) {
-            int result = mTextToSpeech.setLanguage(Locale.getDefault());
-            if (result == TextToSpeech.LANG_MISSING_DATA ||
-                    result == TextToSpeech.LANG_NOT_SUPPORTED) {
-                Log.e("error", "This Language is not supported");
-            }
-        } else {
-            Log.e("error", "Failed to Initialize");
-        }
-    }
-
     public void textToSpeech(String text) {
-        mTextToSpeech.speak(text, TextToSpeech.QUEUE_FLUSH, null, null);
+        if (!mSpeechProcessor.textToSpeech(text)) {
+            Snackbar.make(rootView, getContext().getString(R.string.tts_not_ready),
+                    Snackbar.LENGTH_LONG) .show();
+        }
     }
 
     @Override

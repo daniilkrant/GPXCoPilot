@@ -7,4 +7,5 @@
     <string name="title_activity_main" translatable="false">GPXRallyParser</string>
     <string name="tab_text_1">List</string>
     <string name="tab_text_2">Map</string>
+    <string name="tts_not_ready">TTS not ready</string>
 </resources>
