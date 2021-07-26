@@ -5,4 +5,6 @@
     <string name="elevation_down">вниз</string>
     <string name="turn_direction_right">право</string>
     <string name="turn_direction_left">лево</string>
+    <string name="tab_text_1">Список</string>
+    <string name="tab_text_2">Карта</string>
 </resources>
