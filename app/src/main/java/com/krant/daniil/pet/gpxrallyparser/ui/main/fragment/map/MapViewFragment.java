@@ -50,26 +50,29 @@ public class MapViewFragment extends Fragment implements OnMapReadyCallback,
 
     @Override
     public void onMapReady(GoogleMap googleMap) {
-        mMap = googleMap;
-
+        ArrayList<RallyPoint> rallyPoints = new ArrayList<>();
         try {
             mGpxParser.parseGpx();
-            ArrayList<RallyPoint> rallyPoints = new ArrayList<>(mGpxParser.getRallyPoints());
-            addMarkersToMap(rallyPoints);
-
-            mMap.setOnMarkerClickListener(this);
-            mMap.moveCamera(CameraUpdateFactory.
-                    newLatLngZoom(new LatLng(rallyPoints.get(0).getLatitude(),
-                            rallyPoints.get(0).getLongitude()), 10));
+            rallyPoints = new ArrayList<>(mGpxParser.getRallyPoints());
         } catch (Exception e) {
             e.printStackTrace();
         }
+
+        mMap = googleMap;
+        mMap.setInfoWindowAdapter(new MarkerWindowAdapter(this, rallyPoints));
+        addMarkersToMap(rallyPoints);
+
+        mMap.setOnMarkerClickListener(this);
+        mMap.moveCamera(CameraUpdateFactory.
+                newLatLngZoom(new LatLng(rallyPoints.get(0).getLatitude(),
+                        rallyPoints.get(0).getLongitude()), 10));
+
     }
 
     public void textToSpeech(String text) {
         if (!mSpeechProcessor.textToSpeech(text)) {
             Snackbar.make(rootView, getContext().getString(R.string.tts_not_ready),
-                    Snackbar.LENGTH_LONG) .show();
+                    Snackbar.LENGTH_LONG).show();
         }
     }
 
@@ -88,12 +91,13 @@ public class MapViewFragment extends Fragment implements OnMapReadyCallback,
     }
 
     private void addMarkersToMap(ArrayList<RallyPoint> rallyPoints) {
-        for (RallyPoint rp: rallyPoints) {
+        for (RallyPoint rp : rallyPoints) {
             LatLng point = new LatLng(rp.getLatitude(), rp.getLongitude());
             String title = addIdToMarkerTitle(rp.getHint(), rp.getId());
-            mMap.addMarker(new MarkerOptions()
+            Marker marker = mMap.addMarker(new MarkerOptions()
                     .position(point)
                     .title(title));
+            marker.setTag(rp.getId());
         }
     }
 }
