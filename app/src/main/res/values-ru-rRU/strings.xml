@@ -10,4 +10,5 @@
     <string name="activity_title">Маршрут</string>
     <string name="file_not_found">Файл не найден</string>
     <string name="visual_open_hint">Нажмите сюда, или на кнопку снизу, для того чтобы выбрать .gpx файл</string>
+    <string name="file_not_parsed">Не удалось считать файл</string>
 </resources>

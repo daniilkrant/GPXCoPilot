@@ -41,21 +41,14 @@ public class GPXDataRoutine {
         mContext = context;
     }
 
-    public void parseGpx() {
-        try {
-            InputStream in = mContext.getAssets().open("gpx_example.xml");
-            mParsedGpx = mParser.parse(in); // TODO: Run in bckg
-        } catch (IOException | XmlPullParserException e) {
-            e.printStackTrace();
-        }
-    }
-
-    public void parseGpx(InputStream inputStream) {
+    public boolean parseGpx(InputStream inputStream) {
         try {
             mParsedGpx = mParser.parse(inputStream); // TODO: Run in bckg
         } catch (IOException | XmlPullParserException e) {
             e.printStackTrace();
+            return false;
         }
+        return true;
     }
 
     public List<RallyPoint> getRallyPoints() {

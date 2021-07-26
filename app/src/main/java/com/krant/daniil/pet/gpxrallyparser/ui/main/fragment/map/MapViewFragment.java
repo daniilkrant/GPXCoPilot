@@ -29,7 +29,6 @@ public class MapViewFragment extends Fragment implements OnMapReadyCallback,
     private final static String TITLE_ID_DELIM = ": ";
 
     private GoogleMap mMap;
-    private GPXDataRoutine mGpxParser;
     private SpeechProcessor mSpeechProcessor;
     private View rootView;
 
@@ -37,7 +36,6 @@ public class MapViewFragment extends Fragment implements OnMapReadyCallback,
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         rootView = inflater.inflate(R.layout.fragment_map, container, false);
 
-        mGpxParser = GPXDataRoutine.getInstance();
         mSpeechProcessor = new SpeechProcessor(getContext());
 
         SupportMapFragment mapFragment =
@@ -52,8 +50,7 @@ public class MapViewFragment extends Fragment implements OnMapReadyCallback,
     public void onMapReady(GoogleMap googleMap) {
         ArrayList<RallyPoint> rallyPoints = new ArrayList<>();
         try {
-            mGpxParser.parseGpx();
-            rallyPoints = new ArrayList<>(mGpxParser.getRallyPoints());
+            rallyPoints = new ArrayList<>(GPXDataRoutine.getInstance().getRallyPoints());
         } catch (Exception e) {
             e.printStackTrace();
         }

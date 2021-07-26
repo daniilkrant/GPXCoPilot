@@ -20,13 +20,12 @@ public class ListViewFragment extends Fragment {
             Bundle savedInstanceState) {
 
         View view = inflater.inflate(R.layout.fragment_list, container, false);
-        GPXDataRoutine gpxDataRoutine = GPXDataRoutine.getInstance();
-        gpxDataRoutine.parseGpx();
 
         RecyclerView recyclerView = view.findViewById(R.id.recyclerview);
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(view.getContext()));
-        recyclerView.setAdapter(new RallyPointsListAdapter(gpxDataRoutine.getRallyPoints(),
+        recyclerView.setAdapter(new RallyPointsListAdapter(
+                GPXDataRoutine.getInstance().getRallyPoints(),
                 getContext()));
 
         return view;

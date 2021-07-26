@@ -58,13 +58,20 @@ public class MainActivity extends AppCompatActivity {
         InputStream fileInputStream;
         try {
             fileInputStream = getApplicationContext().getContentResolver().openInputStream(fileUri);
-            GPXDataRoutine.getInstance().parseGpx(fileInputStream);
-            startUI();
+            if (GPXDataRoutine.getInstance().parseGpx(fileInputStream)) {
+                startUI();
+            } else {
+                showError(getApplicationContext().getString(R.string.file_not_parsed));
+            }
         } catch (FileNotFoundException e) {
-            Snackbar.make(binding.viewPager, getApplicationContext().getString(R.string.file_not_found),
-                    Snackbar.LENGTH_LONG).show();
+            showError(getApplicationContext().getString(R.string.file_not_found));
             e.printStackTrace();
         }
+    }
+
+    private void showError(String error) {
+        Snackbar.make(binding.viewPager, error,
+                Snackbar.LENGTH_LONG).show();
     }
 
     private void startUI() {
