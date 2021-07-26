@@ -50,6 +50,14 @@ public class GPXDataRoutine {
         }
     }
 
+    public void parseGpx(InputStream inputStream) {
+        try {
+            mParsedGpx = mParser.parse(inputStream); // TODO: Run in bckg
+        } catch (IOException | XmlPullParserException e) {
+            e.printStackTrace();
+        }
+    }
+
     public List<RallyPoint> getRallyPoints() {
         if (mRallyPoints != null) {
             return mRallyPoints;

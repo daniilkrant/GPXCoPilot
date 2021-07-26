@@ -9,4 +9,5 @@
     <string name="tab_text_2">Map</string>
     <string name="tts_not_ready">TTS not ready</string>
     <string name="activity_title">Your track</string>
+    <string name="file_not_found">File cannot be found</string>
 </resources>
