@@ -2,7 +2,6 @@ package com.krant.daniil.pet.gpxrallyparser;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import android.os.Build;
 import android.os.Bundle;
 import android.speech.tts.TextToSpeech;
 import android.util.Log;
@@ -18,7 +17,7 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import java.util.ArrayList;
 import java.util.Locale;
 
-public class MainActivity extends AppCompatActivity implements OnMapReadyCallback,
+public class MapActivity extends AppCompatActivity implements OnMapReadyCallback,
         TextToSpeech.OnInitListener, GoogleMap.OnMarkerClickListener {
 
     private final static String TITLE_ID_DELIM = ": ";
@@ -31,7 +30,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_map);
 
         mGpxParser = new GPXDataRoutine(getApplicationContext());
         mLexicalProcessor = new LexicalProcessor(getApplicationContext());
