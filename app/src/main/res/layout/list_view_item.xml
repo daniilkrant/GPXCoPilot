@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.cardview.widget.CardView
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:card_view="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/card_view"
@@ -51,6 +50,7 @@
                 android:layout_height="0dp"
                 android:layout_weight="1"
                 android:gravity="center"
+                android:padding="2dp"
                 android:text="48.732875464484096, -3.444574708119035"
                 android:textColor="@color/gray" />
 
@@ -60,9 +60,10 @@
                 android:layout_height="0dp"
                 android:layout_weight="2"
                 android:gravity="center"
+                android:padding="2dp"
                 android:text="left, twenty, up ten"
                 android:textColor="@color/black"
-                android:textSize="24sp" />
+                android:textSize="22sp" />
         </LinearLayout>
     </LinearLayout>
 </androidx.cardview.widget.CardView>

@@ -3,6 +3,8 @@ package com.krant.daniil.pet.gpxrallyparser;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.view.View;
+import android.widget.RelativeLayout;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
@@ -20,6 +22,9 @@ import java.io.InputStream;
 public class MainActivity extends AppCompatActivity {
 
     private ActivityMainBinding binding;
+    private ViewPager mViewPager;
+    private TabLayout mTabs;
+    private RelativeLayout mOpenFileHintLayout;
     private static final int PICKFILE_RESULT_CODE = 42;
 
     @Override
@@ -31,18 +36,18 @@ public class MainActivity extends AppCompatActivity {
 
         GPXDataRoutine.setContext(getApplicationContext());
         FloatingActionButton fab = binding.fab;
+        mViewPager = binding.viewPager;
+        mTabs = binding.tabs;
+        mOpenFileHintLayout = binding.openHintLayout;
 
-        fab.setOnClickListener(view -> {
-            Intent chooseFile = new Intent(Intent.ACTION_GET_CONTENT);
-            chooseFile.setType("*/*");
-            chooseFile = Intent.createChooser(chooseFile, "Choose a file");
-            startActivityForResult(chooseFile, PICKFILE_RESULT_CODE);
-        });
+        mOpenFileHintLayout.setOnClickListener(new OpenFileClickListener());
+        fab.setOnClickListener(new OpenFileClickListener());
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
+        mOpenFileHintLayout.setVisibility(View.GONE);
         if (requestCode == PICKFILE_RESULT_CODE && resultCode == RESULT_OK) {
             Uri filePath = data.getData();
             parseFile(filePath);
@@ -65,9 +70,20 @@ public class MainActivity extends AppCompatActivity {
     private void startUI() {
         SectionsPagerAdapter sectionsPagerAdapter = new SectionsPagerAdapter(
                 this, getSupportFragmentManager());
-        ViewPager viewPager = binding.viewPager;
-        viewPager.setAdapter(sectionsPagerAdapter);
-        TabLayout tabs = binding.tabs;
-        tabs.setupWithViewPager(viewPager);
+        mViewPager.setAdapter(sectionsPagerAdapter);
+        mTabs.setupWithViewPager(mViewPager);
+        mTabs.setVisibility(View.VISIBLE);
+        mViewPager.setVisibility(View.VISIBLE);
     }
+
+    class OpenFileClickListener implements View.OnClickListener {
+        @Override
+        public void onClick(View view) {
+            Intent chooseFile = new Intent(Intent.ACTION_GET_CONTENT);
+            chooseFile.setType("*/*");
+            chooseFile = Intent.createChooser(chooseFile, "Choose a file");
+            startActivityForResult(chooseFile, PICKFILE_RESULT_CODE);
+        }
+    }
+
 }

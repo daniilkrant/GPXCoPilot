@@ -10,4 +10,5 @@
     <string name="tts_not_ready">TTS not ready</string>
     <string name="activity_title">Your track</string>
     <string name="file_not_found">File cannot be found</string>
+    <string name="visual_open_hint">Press here and open your .gpx file, also, you can use floating button</string>
 </resources>
