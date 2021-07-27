@@ -1,10 +1,9 @@
 <resources>
-    <string name="app_name" translatable="false">GPX2Rally</string>
+    <string name="app_name" translatable="false">GPXCoPilot</string>
     <string name="elevation_up">up</string>
     <string name="elevation_down">down</string>
     <string name="turn_direction_right">Right</string>
     <string name="turn_direction_left">Left</string>
-    <string name="title_activity_main" translatable="false">GPX2Rally</string>
     <string name="tab_text_1">List</string>
     <string name="tab_text_2">Map</string>
     <string name="tts_not_ready">TTS not ready</string>
@@ -15,10 +14,11 @@
     <string name="author">Created by Daniil Krant</string>
     <string name="choose_file">Choose a File</string>
     <string name="loading_title">Loading</string>
-    <string name="loading_text">Please wait...</string>
+    <string name="loading_text">Please wait…</string>
     <string name="finish">Finish</string>
     <string name="start">Start</string>
     <string name="turn_direction_forward">Forward</string>
     <string name="point_description">"Description: "</string>
     <string name="point_name">"Name: "</string>
+    <string name="title_activity_main" translatable="false">GPXCoPilot</string>
 </resources>

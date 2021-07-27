@@ -112,25 +112,29 @@ public class MapViewFragment extends Fragment implements OnMapReadyCallback,
             LatLng point = new LatLng(rp.getLatitude(), rp.getLongitude());
             String title = addIdToMarkerTitle(rp.getHint(), rp.getId());
             BitmapDescriptor color;
+            float zIndex = i;
+
             if (rp.isFirst()) {
                 Bitmap imageBitmap = BitmapFactory.decodeResource(getResources(),
                         R.drawable.start_marker);
                 Bitmap resized = Bitmap.createScaledBitmap(imageBitmap, 150, 150, true);
-
                 color = BitmapDescriptorFactory.fromBitmap(resized);
+                zIndex = Float.MAX_VALUE;
             } else if (rp.isLast()) {
                 Bitmap imageBitmap = BitmapFactory.decodeResource(getResources(),
                         R.drawable.finish_marker);
                 Bitmap resized = Bitmap.createScaledBitmap(imageBitmap, 150, 150, true);
-
                 color = BitmapDescriptorFactory.fromBitmap(resized);
+                zIndex = Float.MAX_VALUE;
+
             } else {
                 color = BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED);
             }
             Marker marker = mMap.addMarker(new MarkerOptions()
                     .position(point)
                     .title(title)
-                    .icon(color));
+                    .icon(color)
+                    .zIndex(zIndex));
             marker.setTag(rp.getId());
             mMarkers.add(marker);
 
