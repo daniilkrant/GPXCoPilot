@@ -19,7 +19,6 @@ import com.krant.daniil.pet.gpxrallyparser.Turn;
 public class ListViewItemHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
     private Context mContext;
-    private CardView mCardView;
     private TextView mTurnCoord;
     private TextView mTurnId;
     private TextView mTurnHint;
@@ -29,7 +28,6 @@ public class ListViewItemHolder extends RecyclerView.ViewHolder implements View.
     public ListViewItemHolder(@NonNull View itemView, Context context) {
         super(itemView);
         mContext = context;
-        mCardView = itemView.findViewById(R.id.card_view);
         mTurnCoord = itemView.findViewById(R.id.turn_coord);
         mTurnId = itemView.findViewById(R.id.turn_id);
         mTurnHint = itemView.findViewById(R.id.turn_hint);
