@@ -16,6 +16,12 @@ public class LexicalProcessor {
     }
 
     public String getHint(RallyPoint rallyPoint) {
+        if (rallyPoint.isFirst()) {
+            return mContext.getString(R.string.start);
+        }
+        if (rallyPoint.isLast()) {
+            return mContext.getString(R.string.finish);
+        }
         String hint = "";
         String distance = convertIntIntoWords(rallyPoint.getDistance(),
                 Locale.getDefault().getLanguage(),Locale.getDefault().getCountry());

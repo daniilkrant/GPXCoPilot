@@ -16,4 +16,6 @@
     <string name="choose_file">Choose a File</string>
     <string name="loading_title">Loading</string>
     <string name="loading_text">Please wait...</string>
+    <string name="finish">Finish</string>
+    <string name="start">Start</string>
 </resources>

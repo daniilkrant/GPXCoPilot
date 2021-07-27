@@ -49,7 +49,6 @@ public class MainActivity extends AppCompatActivity {
         Button chooseFileButton = binding.chooseFileButton;
         TextView authorText = binding.author;
 
-        mOpenFileHintLayout.setOnClickListener(new OpenFileClickListener());
         chooseFileButton.setOnClickListener(new OpenFileClickListener());
         mFab.setOnClickListener(new OpenFileClickListener());
         authorText.setOnClickListener(view -> {

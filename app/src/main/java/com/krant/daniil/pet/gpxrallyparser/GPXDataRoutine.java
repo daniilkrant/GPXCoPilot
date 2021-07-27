@@ -86,8 +86,8 @@ public class GPXDataRoutine {
                 trackPoints.get(0).getLongitude(),
                 0, 0,
                 new Turn(180, Turn.Direction.RIGHT));
-        first.setHint(mLexicalProcessor.getHint(first));
         first.setIsFirst(true);
+        first.setHint(mLexicalProcessor.getHint(first));
         mRallyPoints.add(first);
 
         for (int i = 1; i < trackPoints.size() - 1; i++) {
@@ -112,8 +112,8 @@ public class GPXDataRoutine {
                 trackPoints.get(trackPoints.size()-1).getLongitude(),
                 0, 0,
                 new Turn(180, Turn.Direction.RIGHT));
-        last.setHint(mLexicalProcessor.getHint(last));
         last.setIsLast(true);
+        last.setHint(mLexicalProcessor.getHint(last));
         mRallyPoints.add(last);
 
         return mRallyPoints;

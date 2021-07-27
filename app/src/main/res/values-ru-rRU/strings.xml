@@ -15,4 +15,6 @@
     <string name="choose_file">Выбрать файл</string>
     <string name="loading_title">Загрузка</string>
     <string name="loading_text">Пожалуйста подождите...</string>
+    <string name="finish">Финиш</string>
+    <string name="start">Старт</string>
 </resources>
