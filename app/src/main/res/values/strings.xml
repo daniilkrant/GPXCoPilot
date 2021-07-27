@@ -1,10 +1,10 @@
 <resources>
-    <string name="app_name" translatable="false">GPX4Rally</string>
+    <string name="app_name" translatable="false">GPX2Rally</string>
     <string name="elevation_up">up</string>
     <string name="elevation_down">down</string>
     <string name="turn_direction_right">Right</string>
     <string name="turn_direction_left">Left</string>
-    <string name="title_activity_main" translatable="false">GPX4Rally</string>
+    <string name="title_activity_main" translatable="false">GPX2Rally</string>
     <string name="tab_text_1">List</string>
     <string name="tab_text_2">Map</string>
     <string name="tts_not_ready">TTS not ready</string>
