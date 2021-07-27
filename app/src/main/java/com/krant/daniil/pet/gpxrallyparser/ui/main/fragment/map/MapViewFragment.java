@@ -66,6 +66,8 @@ public class MapViewFragment extends Fragment implements OnMapReadyCallback,
         }
 
         mMap = googleMap;
+        mMap.setMapType(GoogleMap.MAP_TYPE_TERRAIN);
+
         mMap.setInfoWindowAdapter(new MarkerWindowAdapter(this, rallyPoints));
         addMarkersToMap(rallyPoints);
 
