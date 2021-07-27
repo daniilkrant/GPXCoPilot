@@ -173,6 +173,21 @@ public class GPXDataRoutine {
         return ret;
     }
 
+    public RallyPoint getNearestRallyPoint(double from_lat, double from_lon) {
+        RallyPoint nearest = mRallyPoints.get(0);
+        int nearest_dist = calcDistanceBtwPoints(from_lat, nearest.getLatitude(),
+                from_lon, nearest.getLongitude());
+        for (int i = 1; i < mRallyPoints.size(); i++) {
+            int dist = calcDistanceBtwPoints(from_lat, mRallyPoints.get(i).getLatitude(),
+                    from_lon, mRallyPoints.get(i).getLongitude());
+            if (dist < nearest_dist) {
+                nearest_dist = dist;
+                nearest = mRallyPoints.get(i);
+            }
+        }
+        return nearest;
+    }
+
     private int calcDistanceBtwPoints(Point tp1, Point tp2) {
         int distance = 0;
         try {
@@ -180,9 +195,14 @@ public class GPXDataRoutine {
                     tp1.getLongitude(), tp2.getLongitude(), tp1.getElevation(), tp2.getElevation());
         } catch (NullPointerException e) {
             distance = calcDistanceBtwPoints(tp1.getLatitude(), tp2.getLatitude(),
-                    tp1.getLongitude(), tp2.getLongitude(), 0, 0);
+                    tp1.getLongitude(), tp2.getLongitude());
         }
         return distance;
+    }
+
+    private int calcDistanceBtwPoints(double lat1, double lat2, double lon1,
+                                      double lon2) {
+        return calcDistanceBtwPoints(lat1, lat2, lon1, lon2, 0, 0);
     }
 
     private int calcDistanceBtwPoints(double lat1, double lat2, double lon1,
