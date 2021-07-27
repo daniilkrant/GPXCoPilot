@@ -21,6 +21,7 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.material.snackbar.Snackbar;
 import com.krant.daniil.pet.gpxrallyparser.GPXDataRoutine;
+import com.krant.daniil.pet.gpxrallyparser.MainActivity;
 import com.krant.daniil.pet.gpxrallyparser.R;
 import com.krant.daniil.pet.gpxrallyparser.RallyPoint;
 import com.krant.daniil.pet.gpxrallyparser.SpeechProcessor;
@@ -28,13 +29,15 @@ import com.krant.daniil.pet.gpxrallyparser.SpeechProcessor;
 import java.util.ArrayList;
 
 public class MapViewFragment extends Fragment implements OnMapReadyCallback,
-        GoogleMap.OnMarkerClickListener {
+        GoogleMap.OnMarkerClickListener, ZoomToMarker {
 
     private final static String TITLE_ID_DELIM = ": ";
 
     private GoogleMap mMap;
     private SpeechProcessor mSpeechProcessor;
     private View rootView;
+    private ArrayList<RallyPoint> mRallyPoints;
+    private ArrayList<Marker> mMarkers = new ArrayList<>();
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -52,6 +55,7 @@ public class MapViewFragment extends Fragment implements OnMapReadyCallback,
 
     @Override
     public void onMapReady(GoogleMap googleMap) {
+        MainActivity.setZoomToMarker(this);
         ArrayList<RallyPoint> rallyPoints = new ArrayList<>();
         try {
             rallyPoints = new ArrayList<>(GPXDataRoutine.getInstance().getRallyPoints());
@@ -93,6 +97,7 @@ public class MapViewFragment extends Fragment implements OnMapReadyCallback,
 
     private void addMarkersToMap(ArrayList<RallyPoint> rallyPoints) {
         mMap.clear();
+        mRallyPoints = rallyPoints;
         for (int i = 0; i < rallyPoints.size(); i++) {
             RallyPoint rp = rallyPoints.get(i);
             LatLng point = new LatLng(rp.getLatitude(), rp.getLongitude());
@@ -118,7 +123,16 @@ public class MapViewFragment extends Fragment implements OnMapReadyCallback,
                     .title(title)
                     .icon(color));
             marker.setTag(rp.getId());
+            mMarkers.add(marker);
         }
 
+    }
+
+    @Override
+    public void zoomToMarker(int number) {
+        mMap.moveCamera(CameraUpdateFactory.
+                newLatLngZoom(new LatLng(mRallyPoints.get(number).getLatitude(),
+                        mRallyPoints.get(number).getLongitude()), 20));
+        mMarkers.get(number).showInfoWindow();
     }
 }

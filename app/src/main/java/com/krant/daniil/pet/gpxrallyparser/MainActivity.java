@@ -5,13 +5,11 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.TextView;
 
-import com.google.android.material.appbar.AppBarLayout;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.tabs.TabLayout;
@@ -21,6 +19,9 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.krant.daniil.pet.gpxrallyparser.databinding.ActivityMainBinding;
 import com.krant.daniil.pet.gpxrallyparser.ui.main.fragment.SectionsPagerAdapter;
+import com.krant.daniil.pet.gpxrallyparser.ui.main.fragment.list.ListItemClicked;
+import com.krant.daniil.pet.gpxrallyparser.ui.main.fragment.list.ListViewItemHolder;
+import com.krant.daniil.pet.gpxrallyparser.ui.main.fragment.map.ZoomToMarker;
 
 import java.io.FileNotFoundException;
 import java.io.InputStream;
@@ -32,6 +33,8 @@ public class MainActivity extends AppCompatActivity {
     private TabLayout mTabs;
     private FrameLayout mOpenFileHintLayout;
     private FloatingActionButton mFab;
+    private ShowMap mShowMapGoToMarker;
+    private static ZoomToMarker mZoomToMarker;
 
     private static final int PICKFILE_RESULT_CODE = 42;
 
@@ -40,6 +43,8 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
+
+        mShowMapGoToMarker = new ShowMap();
 
         GPXDataRoutine.setContext(getApplicationContext());
         mFab = binding.fab;
@@ -97,6 +102,11 @@ public class MainActivity extends AppCompatActivity {
         mFab.setVisibility(View.VISIBLE);
     }
 
+    public static void setZoomToMarker(ZoomToMarker mZoomToMarker) {
+        MainActivity.mZoomToMarker = mZoomToMarker;
+    }
+
+
     class OpenFileClickListener implements View.OnClickListener {
         @Override
         public void onClick(View view) {
@@ -141,6 +151,7 @@ public class MainActivity extends AppCompatActivity {
             if (result) {
                 mViewPager.setAdapter(mSectionsPagerAdapter);
                 mTabs.setupWithViewPager(mViewPager);
+                ListViewItemHolder.setListItemClicked(mShowMapGoToMarker);
                 showUI();
             } else {
                 showError(getApplicationContext().getString(R.string.file_not_parsed));
@@ -148,5 +159,18 @@ public class MainActivity extends AppCompatActivity {
             mProgress.cancel();
         }
     }
+
+    class ShowMap implements ListItemClicked {
+
+        @Override
+        public void itemClicked(int position) {
+            TabLayout.Tab mapTab = mTabs.getTabAt(1);
+            mTabs.selectTab(mapTab);
+            if (mZoomToMarker != null) {
+                mZoomToMarker.zoomToMarker(position);
+            }
+        }
+    }
+
 
 }

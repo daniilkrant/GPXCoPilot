@@ -1,9 +1,11 @@
 package com.krant.daniil.pet.gpxrallyparser.ui.main.fragment.list;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.cardview.widget.CardView;
@@ -14,7 +16,7 @@ import com.krant.daniil.pet.gpxrallyparser.R;
 import com.krant.daniil.pet.gpxrallyparser.RallyPoint;
 import com.krant.daniil.pet.gpxrallyparser.Turn;
 
-public class ListViewItemHolder extends RecyclerView.ViewHolder {
+public class ListViewItemHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
     private Context mContext;
     private CardView mCardView;
@@ -22,6 +24,7 @@ public class ListViewItemHolder extends RecyclerView.ViewHolder {
     private TextView mTurnId;
     private TextView mTurnHint;
     private ImageView mTurnDirection;
+    private static ListItemClicked mListItemClicked;
 
     public ListViewItemHolder(@NonNull View itemView, Context context) {
         super(itemView);
@@ -41,6 +44,18 @@ public class ListViewItemHolder extends RecyclerView.ViewHolder {
             mTurnDirection.setImageDrawable(ContextCompat.getDrawable(mContext, R.drawable.right_turn));
         } else {
             mTurnDirection.setImageDrawable(ContextCompat.getDrawable(mContext, R.drawable.left_turn));
+        }
+    }
+
+
+    public static void setListItemClicked(ListItemClicked listItemClicked) {
+        mListItemClicked = listItemClicked;
+    }
+
+    @Override
+    public void onClick(View view) {
+        if (mListItemClicked != null) {
+            mListItemClicked.itemClicked(getLayoutPosition());
         }
     }
 }
