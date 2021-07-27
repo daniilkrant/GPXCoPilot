@@ -46,9 +46,9 @@ public class LexicalProcessor {
     private String turnDirectionToWord(Turn.Direction direction) {
         if (direction == Turn.Direction.RIGHT) {
             return mContext.getString(R.string.turn_direction_right);
-        } else {
+        } else if (direction == Turn.Direction.LEFT) {
             return mContext.getString(R.string.turn_direction_left);
-        }
+        } else return mContext.getString(R.string.turn_direction_forward);
     }
 
     private String elevationToWord(int elevation) {

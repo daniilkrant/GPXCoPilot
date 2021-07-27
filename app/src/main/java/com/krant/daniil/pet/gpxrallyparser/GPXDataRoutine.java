@@ -97,8 +97,10 @@ public class GPXDataRoutine {
             int pointElevation = calcElevationBtwPoints(trackPoints.get(i),
                     trackPoints.get(i + 1));
             int turnAngle = calcTurnAngleBtwPoints(trackPoints.get(i - 1),
-                    trackPoints.get(i), trackPoints.get(i + 1));
-            Turn.Direction turnDirection = calcTurnDirectionBtwPoints(trackPoints.get(i),
+                    trackPoints.get(i),
+                    trackPoints.get(i + 1));
+            Turn.Direction turnDirection = calcTurnDirectionBtwPoints(trackPoints.get(i - 1),
+                    trackPoints.get(i),
                     trackPoints.get(i + 1));
 
             RallyPoint rallyPoint = new RallyPoint(i, trackPoints.get(i).getLatitude(),
@@ -230,20 +232,24 @@ public class GPXDataRoutine {
         }
     }
 
-    private Turn.Direction calcTurnDirectionBtwPoints(Point tp1, Point tp2) {
-        return calcTurnDirectionBtwPoints(tp1.getLatitude(), tp2.getLatitude());
+    private Turn.Direction calcTurnDirectionBtwPoints(Point tp1, Point tp2, Point tp3) {
+        return calcTurnDirectionBtwPoints(tp1.getLatitude(), tp1.getLongitude(),
+                tp2.getLatitude(), tp2.getLongitude(), tp3.getLatitude(), tp3.getLongitude());
     }
 
-    private Turn.Direction calcTurnDirectionBtwPoints(double from, double to) {
-        Turn.Direction direction;
-        double webMercatorLatFrom = WebMercatorConvertor.latitudeToY(from);
-        double webMercatorLatTo = WebMercatorConvertor.latitudeToY(to);
-        if (webMercatorLatFrom < webMercatorLatTo) {
-            direction = Turn.Direction.RIGHT;
-        } else {
-            direction = Turn.Direction.LEFT;
+    private Turn.Direction calcTurnDirectionBtwPoints(double lat1, double lon1, double lat2, double lon2,
+                                                      double lat3, double lon3) {
+        double angle = Math.toDegrees(Math.atan2(lat3 - lat2, lon3 - lon2)
+                - Math.atan2(lat1 - lat2, lon1 - lon2));
+        if (((angle > 175) && (angle < 185)) ||
+                ((angle > -185) && (angle < -175))) {
+            return Turn.Direction.FORWARD;
         }
-        return direction;
+        if (((angle > 0) && (angle < 180)) || ((angle > -360) && (angle < -180))) {
+            return Turn.Direction.RIGHT;
+        } else {
+            return Turn.Direction.LEFT;
+        }
     }
 
 }

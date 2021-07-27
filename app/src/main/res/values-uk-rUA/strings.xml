@@ -17,4 +17,5 @@
     <string name="loading_text">Будь ласка зачекайте...</string>
     <string name="finish">Фініш</string>
     <string name="start">Старт</string>
+    <string name="turn_direction_forward">Прямо</string>
 </resources>
