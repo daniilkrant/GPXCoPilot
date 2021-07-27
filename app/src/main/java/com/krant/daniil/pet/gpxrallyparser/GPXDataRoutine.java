@@ -12,6 +12,9 @@ import java.util.List;
 
 import io.ticofab.androidgpxparser.parser.GPXParser;
 import io.ticofab.androidgpxparser.parser.domain.Gpx;
+import io.ticofab.androidgpxparser.parser.domain.Point;
+import io.ticofab.androidgpxparser.parser.domain.Route;
+import io.ticofab.androidgpxparser.parser.domain.RoutePoint;
 import io.ticofab.androidgpxparser.parser.domain.Track;
 import io.ticofab.androidgpxparser.parser.domain.TrackPoint;
 import io.ticofab.androidgpxparser.parser.domain.TrackSegment;
@@ -24,6 +27,9 @@ public class GPXDataRoutine {
     private final GPXParser mParser = new GPXParser();
     private Gpx mParsedGpx;
     private List<RallyPoint> mRallyPoints;
+    private boolean mIsTracksFound = false;
+    private boolean mIsRoutesFound = false;
+    private boolean mIsWayPointsFound = false;
     private final LexicalProcessor mLexicalProcessor;
 
     private GPXDataRoutine() {
@@ -44,11 +50,20 @@ public class GPXDataRoutine {
     public boolean parseGpx(InputStream inputStream) {
         try {
             mParsedGpx = mParser.parse(inputStream); // TODO: Run in bckg
+            if (mParsedGpx.getRoutes().size() != 0) {
+                mIsRoutesFound = true;
+            }
+            if (mParsedGpx.getTracks().size() != 0) {
+                mIsTracksFound = true;
+            }
+            if (mParsedGpx.getWayPoints().size() != 0) {
+                mIsWayPointsFound = true;
+            }
         } catch (IOException | XmlPullParserException e) {
             e.printStackTrace();
             return false;
         }
-        return true;
+        return mIsRoutesFound || mIsTracksFound || mIsWayPointsFound;
     }
 
     public List<RallyPoint> getRallyPoints() {
@@ -56,9 +71,26 @@ public class GPXDataRoutine {
             return mRallyPoints;
         }
         mRallyPoints = new ArrayList<>();
-        ArrayList<TrackPoint> trackPoints = new ArrayList<>(getAllTrackPoints());
+        ArrayList<Point> trackPoints = new ArrayList<>();
+        if (mIsTracksFound) {
+            trackPoints.addAll(getAllTrackPoints());
+        }
+        if (mIsRoutesFound) {
+            trackPoints.addAll(getAllRoutePoints());
+        }
+        if (mIsWayPointsFound) {
+            trackPoints.addAll(getAllWayPoints());
+        }
 
-        for (int i = 1; i < trackPoints.size() - 2; i++) {
+        RallyPoint first = new RallyPoint(0, trackPoints.get(0).getLatitude(),
+                trackPoints.get(0).getLongitude(),
+                0, 0,
+                new Turn(180, Turn.Direction.RIGHT));
+        first.setHint(mLexicalProcessor.getHint(first));
+        first.setIsFirst(true);
+        mRallyPoints.add(first);
+
+        for (int i = 1; i < trackPoints.size() - 1; i++) {
             int pointDistance = calcDistanceBtwPoints(trackPoints.get(i),
                     trackPoints.get(i + 1));
             int pointElevation = calcElevationBtwPoints(trackPoints.get(i),
@@ -75,6 +107,15 @@ public class GPXDataRoutine {
             mRallyPoints.add(rallyPoint);
         }
 
+        RallyPoint last = new RallyPoint(trackPoints.size()-1,
+                trackPoints.get(trackPoints.size()-1).getLatitude(),
+                trackPoints.get(trackPoints.size()-1).getLongitude(),
+                0, 0,
+                new Turn(180, Turn.Direction.RIGHT));
+        last.setHint(mLexicalProcessor.getHint(last));
+        last.setIsLast(true);
+        mRallyPoints.add(last);
+
         return mRallyPoints;
     }
 
@@ -82,6 +123,29 @@ public class GPXDataRoutine {
         mRallyPoints = null;
     }
 
+    private List<RoutePoint> getAllRoutePoints() {
+        ArrayList<RoutePoint> ret = new ArrayList<>();
+        if (mParsedGpx != null) {
+            ArrayList<Route> routes = new ArrayList<>(mParsedGpx.getRoutes());
+            for (Route r : routes) {
+                ArrayList<RoutePoint> routePoints = new ArrayList<>(r.getRoutePoints());
+                ret.addAll(routePoints);
+            }
+        } else {
+            Log.e("TAG", "Parse error");
+        }
+        return ret;
+    }
+
+    private List<Point> getAllWayPoints() {
+        ArrayList<Point> ret = new ArrayList<>();
+        if (mParsedGpx != null) {
+            ret = new ArrayList<>(mParsedGpx.getWayPoints());
+        } else {
+            Log.e("TAG", "Parse error");
+        }
+        return ret;
+    }
 
     private List<TrackPoint> getAllTrackPoints() {
         ArrayList<TrackPoint> ret = new ArrayList<>();
@@ -100,9 +164,16 @@ public class GPXDataRoutine {
         return ret;
     }
 
-    private int calcDistanceBtwPoints(TrackPoint tp1, TrackPoint tp2) {
-        return calcDistanceBtwPoints(tp1.getLatitude(), tp2.getLatitude(),
-                tp1.getLongitude(), tp2.getLongitude(), tp1.getElevation(), tp2.getElevation());
+    private int calcDistanceBtwPoints(Point tp1, Point tp2) {
+        int distance = 0;
+        try {
+            distance = calcDistanceBtwPoints(tp1.getLatitude(), tp2.getLatitude(),
+                    tp1.getLongitude(), tp2.getLongitude(), tp1.getElevation(), tp2.getElevation());
+        } catch (NullPointerException e) {
+            distance = calcDistanceBtwPoints(tp1.getLatitude(), tp2.getLatitude(),
+                    tp1.getLongitude(), tp2.getLongitude(), 0, 0);
+        }
+        return distance;
     }
 
     private int calcDistanceBtwPoints(double lat1, double lat2, double lon1,
@@ -124,15 +195,19 @@ public class GPXDataRoutine {
         return (int) Math.sqrt(distance);
     }
 
-    private int calcElevationBtwPoints(TrackPoint tp1, TrackPoint tp2) {
-        return calcElevationBtwPoints(tp1.getElevation(), tp2.getElevation());
+    private int calcElevationBtwPoints(Point tp1, Point tp2) {
+        int distance = 0;
+        try {
+            distance = calcElevationBtwPoints(tp1.getElevation(), tp2.getElevation());
+        } catch (NullPointerException e) { }
+        return distance;
     }
 
     private int calcElevationBtwPoints(double from, double to) {
         return (int) (from - to);
     }
 
-    private int calcTurnAngleBtwPoints(TrackPoint tp1, TrackPoint tp2, TrackPoint tp3) {
+    private int calcTurnAngleBtwPoints(Point tp1, Point tp2, Point tp3) {
         return calcTurnAngleBtwPoints(tp1.getLatitude(), tp1.getLongitude(),
                 tp2.getLatitude(), tp2.getLongitude(), tp3.getLatitude(), tp3.getLongitude());
     }
@@ -150,7 +225,7 @@ public class GPXDataRoutine {
         }
     }
 
-    private Turn.Direction calcTurnDirectionBtwPoints(TrackPoint tp1, TrackPoint tp2) {
+    private Turn.Direction calcTurnDirectionBtwPoints(Point tp1, Point tp2) {
         return calcTurnDirectionBtwPoints(tp1.getLatitude(), tp2.getLatitude());
     }
 

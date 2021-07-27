@@ -21,7 +21,7 @@ public class LexicalProcessor {
                 Locale.getDefault().getLanguage(),Locale.getDefault().getCountry());
         String elevation = elevationToWord(rallyPoint.getElevation());
         hint += turnDirectionToWord(rallyPoint.getTurn().getDirection()) + DELIM;
-        hint += convertIntIntoWords(rallyPoint.getTurn().getHint(),
+        hint += convertIntIntoWords(rallyPoint.getTurn().getMeasure(),
                 Locale.getDefault().getLanguage(),Locale.getDefault().getCountry()) + DELIM;
         hint += distance;
         if (!elevation.isEmpty()) {

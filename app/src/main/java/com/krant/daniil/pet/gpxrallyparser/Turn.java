@@ -3,13 +3,13 @@ package com.krant.daniil.pet.gpxrallyparser;
 public class Turn {
 
     private final int mAngle;
-    private final int mHint;
+    private final int mMeasure;
     private final Direction mDirection;
 
     public Turn(int angle, Direction direction) {
         this.mAngle = angle;
         this.mDirection = direction;
-        mHint = countHint();
+        mMeasure = countHint();
     }
 
     public int getAngle() {
@@ -32,14 +32,15 @@ public class Turn {
         return -1;
     }
 
-    public int getHint() {
-        return mHint;
+    public int getMeasure() {
+        return mMeasure;
     }
 
     @Override
     public String toString() {
         return "Turn{" +
                 "mAngle=" + mAngle +
+                ", mMeausre=" + mMeasure +
                 ", mDirection=" + mDirection +
                 '}';
     }

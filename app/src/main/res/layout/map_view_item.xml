@@ -45,17 +45,6 @@
             android:orientation="vertical">
 
             <TextView
-                android:id="@+id/turn_coord"
-                android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_weight="2"
-                android:gravity="center"
-                android:text="48.732875464484096, -3.444574708119035"
-                android:textColor="@color/gray"
-                android:textSize="12sp"
-                android:visibility="gone"/>
-
-            <TextView
                 android:id="@+id/turn_hint"
                 android:layout_width="match_parent"
                 android:layout_height="0dp"

@@ -32,7 +32,6 @@ public class MainActivity extends AppCompatActivity {
     private TabLayout mTabs;
     private FrameLayout mOpenFileHintLayout;
     private FloatingActionButton mFab;
-    private AppBarLayout mAppBarLayout;
 
     private static final int PICKFILE_RESULT_CODE = 42;
 
@@ -47,7 +46,6 @@ public class MainActivity extends AppCompatActivity {
         mViewPager = binding.viewPager;
         mTabs = binding.tabs;
         mOpenFileHintLayout = binding.openHintLayout;
-        mAppBarLayout = binding.appBarLayout;
         Button chooseFileButton = binding.chooseFileButton;
         TextView authorText = binding.author;
 
@@ -55,12 +53,9 @@ public class MainActivity extends AppCompatActivity {
         chooseFileButton.setOnClickListener(new OpenFileClickListener());
         mFab.setOnClickListener(new OpenFileClickListener());
         authorText.setOnClickListener(view -> {
-            Intent emailIntent = new Intent(android.content.Intent.ACTION_SEND);
-            emailIntent.setType("plain/text");
-
-            emailIntent.putExtra(android.content.Intent.EXTRA_EMAIL, new String[]{"danbiil988@gmail.com"});
-            emailIntent.putExtra(android.content.Intent.EXTRA_SUBJECT, "GPX4Rally");
-            startActivity(Intent.createChooser(emailIntent, "Contact me"));
+            Intent browserIntent = new Intent(Intent.ACTION_VIEW,
+                    Uri.parse("https://www.linkedin.com/in/daniilkrant/"));
+            startActivity(browserIntent);
         });
     }
 

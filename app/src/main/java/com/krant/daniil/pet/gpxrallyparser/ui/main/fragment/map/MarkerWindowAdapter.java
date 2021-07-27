@@ -21,7 +21,6 @@ import java.util.List;
 public class MarkerWindowAdapter implements GoogleMap.InfoWindowAdapter {
     private Fragment mFragment;
     private List<RallyPoint> mRallyPoints;
-    private TextView mTurnCoord;
     private TextView mTurnId;
     private TextView mTurnHint;
     private ImageView mTurnDirection;
@@ -35,7 +34,6 @@ public class MarkerWindowAdapter implements GoogleMap.InfoWindowAdapter {
     @Override
     public View getInfoWindow(Marker marker) {
         View v = mFragment.getLayoutInflater().inflate(R.layout.map_view_item, null);
-        mTurnCoord = v.findViewById(R.id.turn_coord);
         mTurnId = v.findViewById(R.id.turn_id);
         mTurnHint = v.findViewById(R.id.turn_hint);
         mTurnDirection = v.findViewById(R.id.turn_image);
@@ -45,7 +43,6 @@ public class MarkerWindowAdapter implements GoogleMap.InfoWindowAdapter {
 
     public void fillView(View v, RallyPoint rallyPoint) {
         mTurnId.setText(Integer.toString(rallyPoint.getId()));
-        mTurnCoord.setText(rallyPoint.getLatitude() + " " + rallyPoint.getLongitude());
         mTurnHint.setText(rallyPoint.getHint());
         if (rallyPoint.getTurn().getDirection() == Turn.Direction.RIGHT) {
             mTurnDirection.setImageDrawable(

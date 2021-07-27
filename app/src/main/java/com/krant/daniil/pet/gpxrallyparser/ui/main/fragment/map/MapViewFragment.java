@@ -1,5 +1,7 @@
 package com.krant.daniil.pet.gpxrallyparser.ui.main.fragment.map;
 
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.speech.tts.TextToSpeech;
 import android.view.LayoutInflater;
@@ -91,13 +93,23 @@ public class MapViewFragment extends Fragment implements OnMapReadyCallback,
 
     private void addMarkersToMap(ArrayList<RallyPoint> rallyPoints) {
         mMap.clear();
-        boolean isFirst = true;
-        for (RallyPoint rp : rallyPoints) {
+        for (int i = 0; i < rallyPoints.size(); i++) {
+            RallyPoint rp = rallyPoints.get(i);
             LatLng point = new LatLng(rp.getLatitude(), rp.getLongitude());
             String title = addIdToMarkerTitle(rp.getHint(), rp.getId());
             BitmapDescriptor color;
-            if (isFirst) {
-                color = BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN);
+            if (rp.isFirst()) {
+                Bitmap imageBitmap= BitmapFactory.decodeResource(getResources(),
+                        R.drawable.start_marker);
+                Bitmap resized = Bitmap.createScaledBitmap(imageBitmap, 150, 150, true);
+
+                color = BitmapDescriptorFactory.fromBitmap(resized);
+            } else if (rp.isLast()) {
+                Bitmap imageBitmap= BitmapFactory.decodeResource(getResources(),
+                        R.drawable.finish_marker);
+                Bitmap resized = Bitmap.createScaledBitmap(imageBitmap, 150, 150, true);
+
+                color = BitmapDescriptorFactory.fromBitmap(resized);
             } else {
                 color = BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED);
             }
@@ -105,8 +117,8 @@ public class MapViewFragment extends Fragment implements OnMapReadyCallback,
                     .position(point)
                     .title(title)
                     .icon(color));
-            isFirst = false;
             marker.setTag(rp.getId());
         }
+
     }
 }

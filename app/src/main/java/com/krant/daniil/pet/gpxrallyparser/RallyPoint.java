@@ -9,6 +9,8 @@ public class RallyPoint {
     private final int mElevation;
     private final Turn mTurn;
     private String mHint;
+    private boolean mIsFirst;
+    private boolean mIsLast;
 
 
     public RallyPoint(int id, double latitude, double longitude, int distance, int elevation, Turn turn) {
@@ -29,11 +31,9 @@ public class RallyPoint {
         return mLongitude;
     }
 
-
     public int getDistance() {
         return mDistance;
     }
-
 
     public int getElevation() {
         return mElevation;
@@ -54,6 +54,18 @@ public class RallyPoint {
 
     public void setHint(String hint) {
         this.mHint = hint;
+    }
+
+    public boolean isFirst() {return mIsFirst;}
+
+    public boolean isLast() {return mIsLast;}
+
+    public void setIsFirst(boolean is) {
+        this.mIsFirst = is;
+    }
+
+    public void setIsLast(boolean is) {
+        this.mIsLast = is;
     }
 
     @Override
