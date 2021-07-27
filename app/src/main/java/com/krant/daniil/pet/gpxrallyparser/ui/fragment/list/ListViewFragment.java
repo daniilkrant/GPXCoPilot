@@ -1,20 +1,16 @@
-package com.krant.daniil.pet.gpxrallyparser.ui.main.fragment.list;
+package com.krant.daniil.pet.gpxrallyparser.ui.fragment.list;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 
-import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.krant.daniil.pet.gpxrallyparser.GPXDataRoutine;
 import com.krant.daniil.pet.gpxrallyparser.R;
-
-import org.jetbrains.annotations.NotNull;
 
 public class ListViewFragment extends Fragment {
 

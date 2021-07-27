@@ -1,11 +1,9 @@
-package com.krant.daniil.pet.gpxrallyparser.ui.main.fragment.map;
+package com.krant.daniil.pet.gpxrallyparser.ui.fragment.map;
 
-import android.content.Context;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import androidx.cardview.widget.CardView;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 
@@ -15,7 +13,6 @@ import com.krant.daniil.pet.gpxrallyparser.R;
 import com.krant.daniil.pet.gpxrallyparser.RallyPoint;
 import com.krant.daniil.pet.gpxrallyparser.Turn;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class MarkerWindowAdapter implements GoogleMap.InfoWindowAdapter {

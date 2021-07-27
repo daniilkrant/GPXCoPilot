@@ -1,7 +1,10 @@
 package com.krant.daniil.pet.gpxrallyparser;
 
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.Intent;
+import android.location.LocationListener;
+import android.location.LocationManager;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -18,10 +21,10 @@ import androidx.viewpager.widget.ViewPager;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.krant.daniil.pet.gpxrallyparser.databinding.ActivityMainBinding;
-import com.krant.daniil.pet.gpxrallyparser.ui.main.fragment.SectionsPagerAdapter;
-import com.krant.daniil.pet.gpxrallyparser.ui.main.fragment.list.ListItemClicked;
-import com.krant.daniil.pet.gpxrallyparser.ui.main.fragment.list.ListViewItemHolder;
-import com.krant.daniil.pet.gpxrallyparser.ui.main.fragment.map.ZoomToMarker;
+import com.krant.daniil.pet.gpxrallyparser.ui.fragment.SectionsPagerAdapter;
+import com.krant.daniil.pet.gpxrallyparser.ui.fragment.list.ListItemClicked;
+import com.krant.daniil.pet.gpxrallyparser.ui.fragment.list.ListViewItemHolder;
+import com.krant.daniil.pet.gpxrallyparser.ui.fragment.map.ZoomToMarker;
 
 import java.io.FileNotFoundException;
 import java.io.InputStream;

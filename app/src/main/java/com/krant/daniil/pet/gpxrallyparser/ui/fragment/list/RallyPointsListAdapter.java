@@ -1,7 +1,6 @@
-package com.krant.daniil.pet.gpxrallyparser.ui.main.fragment.list;
+package com.krant.daniil.pet.gpxrallyparser.ui.fragment.list;
 
 import android.content.Context;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,7 +13,6 @@ import com.krant.daniil.pet.gpxrallyparser.RallyPoint;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 
 public class RallyPointsListAdapter extends RecyclerView.Adapter<ListViewItemHolder> {
 

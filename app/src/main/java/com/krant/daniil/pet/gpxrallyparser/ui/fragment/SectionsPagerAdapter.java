@@ -1,4 +1,4 @@
-package com.krant.daniil.pet.gpxrallyparser.ui.main.fragment;
+package com.krant.daniil.pet.gpxrallyparser.ui.fragment;
 
 import android.content.Context;
 
@@ -10,8 +10,8 @@ import androidx.fragment.app.FragmentPagerAdapter;
 
 import com.krant.daniil.pet.gpxrallyparser.GPXDataRoutine;
 import com.krant.daniil.pet.gpxrallyparser.R;
-import com.krant.daniil.pet.gpxrallyparser.ui.main.fragment.list.ListViewFragment;
-import com.krant.daniil.pet.gpxrallyparser.ui.main.fragment.map.MapViewFragment;
+import com.krant.daniil.pet.gpxrallyparser.ui.fragment.list.ListViewFragment;
+import com.krant.daniil.pet.gpxrallyparser.ui.fragment.map.MapViewFragment;
 
 public class SectionsPagerAdapter extends FragmentPagerAdapter {
 

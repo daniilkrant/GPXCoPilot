@@ -1,15 +1,12 @@
-package com.krant.daniil.pet.gpxrallyparser.ui.main.fragment.list;
+package com.krant.daniil.pet.gpxrallyparser.ui.fragment.list;
 
 import android.content.Context;
-import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.cardview.widget.CardView;
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 

@@ -1,14 +1,23 @@
-package com.krant.daniil.pet.gpxrallyparser.ui.main.fragment.map;
+package com.krant.daniil.pet.gpxrallyparser.ui.fragment.map;
 
+import android.Manifest;
+import android.annotation.SuppressLint;
+import android.content.Context;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
+import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
 import android.os.Bundle;
-import android.speech.tts.TextToSpeech;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import androidx.annotation.NonNull;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -31,21 +40,28 @@ import com.krant.daniil.pet.gpxrallyparser.SpeechProcessor;
 import java.util.ArrayList;
 
 public class MapViewFragment extends Fragment implements OnMapReadyCallback,
-        GoogleMap.OnMarkerClickListener, ZoomToMarker {
+        GoogleMap.OnMarkerClickListener, ZoomToMarker, LocationListener {
 
     private final static String TITLE_ID_DELIM = ": ";
-
+    private final static int LOCATION_REQUEST = 4242;
+    private static final String[] LOCATION_PERMS = {
+            Manifest.permission.ACCESS_FINE_LOCATION,
+            Manifest.permission.ACCESS_COARSE_LOCATION,
+    };
     private GoogleMap mMap;
     private SpeechProcessor mSpeechProcessor;
     private View rootView;
     private ArrayList<RallyPoint> mRallyPoints;
-    private ArrayList<Marker> mMarkers = new ArrayList<>();
+    private final ArrayList<Marker> mMarkers = new ArrayList<>();
+    private LocationManager mLocationManager;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         rootView = inflater.inflate(R.layout.fragment_map, container, false);
 
         mSpeechProcessor = new SpeechProcessor(getContext());
+        mLocationManager = (LocationManager) getContext().getSystemService(Context.LOCATION_SERVICE);
+        requestPermissions(LOCATION_PERMS, LOCATION_REQUEST);
 
         SupportMapFragment mapFragment =
                 (SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.map);
@@ -53,6 +69,21 @@ public class MapViewFragment extends Fragment implements OnMapReadyCallback,
             mapFragment.getMapAsync(this);
         }
         return rootView;
+    }
+
+    @SuppressLint("MissingPermission")
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        if (requestCode == LOCATION_REQUEST) {
+            if (ContextCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_COARSE_LOCATION)
+                    == PackageManager.PERMISSION_GRANTED) {
+                if (ContextCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_FINE_LOCATION)
+                        == PackageManager.PERMISSION_GRANTED) {
+                    mLocationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,
+                            0, 0, this);
+                }
+            }
+        }
     }
 
     @Override
@@ -149,5 +180,18 @@ public class MapViewFragment extends Fragment implements OnMapReadyCallback,
                 newLatLngZoom(new LatLng(mRallyPoints.get(number).getLatitude(),
                         mRallyPoints.get(number).getLongitude()), 20));
         mMarkers.get(number).showInfoWindow();
+    }
+
+    @Override
+    @SuppressLint("MissingPermission")
+    public void onLocationChanged(@NonNull Location location) {
+        mMap.setMyLocationEnabled(true);
+        Log.e("Location", location.toString());
+    }
+
+    @Override
+    @SuppressLint("MissingPermission")
+    public void onProviderDisabled(@NonNull String provider) {
+        mMap.setMyLocationEnabled(false);
     }
 }
