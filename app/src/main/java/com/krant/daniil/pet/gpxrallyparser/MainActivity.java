@@ -5,7 +5,6 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.FrameLayout;
@@ -36,7 +35,7 @@ public class MainActivity extends AppCompatActivity {
     private FloatingActionButton mFab;
     private ShowMap mShowMapGoToMarker;
     private static ZoomToMarker mZoomToMarker;
-    private boolean mIsRedrawActivity = true;
+    private boolean mIsRedrawActivityNeeded = true;
 
     private static final int PICKFILE_RESULT_CODE = 42;
 
@@ -51,7 +50,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        if (mIsRedrawActivity) {
+        if (mIsRedrawActivityNeeded) {
             mBinding = ActivityMainBinding.inflate(getLayoutInflater());
             setContentView(mBinding.getRoot());
 
@@ -69,7 +68,7 @@ public class MainActivity extends AppCompatActivity {
                         Uri.parse("https://www.linkedin.com/in/daniilkrant/"));
                 startActivity(browserIntent);
             });
-            mIsRedrawActivity = false;
+            mIsRedrawActivityNeeded = false;
         }
     }
 
@@ -81,7 +80,7 @@ public class MainActivity extends AppCompatActivity {
             Uri filePath = data.getData();
             new ParseTask(filePath).execute();
         } else {
-            mIsRedrawActivity = true;
+            mIsRedrawActivityNeeded = true;
         }
     }
 
@@ -102,6 +101,8 @@ public class MainActivity extends AppCompatActivity {
     private void showError(String error) {
         Snackbar.make(mBinding.viewPager, error,
                 Snackbar.LENGTH_LONG).show();
+        mIsRedrawActivityNeeded = true;
+        onResume();
     }
 
     private void showUI() {
