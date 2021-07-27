@@ -79,7 +79,9 @@ public class GPXDataRoutine {
             trackPoints.addAll(getAllRoutePoints());
         }
         if (mIsWayPointsFound) {
-            trackPoints.addAll(getAllWayPoints());
+            if (!mParsedGpx.getCreator().equals("mapstogpx.com")) {
+                trackPoints.addAll(getAllWayPoints());
+            }
         }
 
         RallyPoint first = new RallyPoint(0, trackPoints.get(0).getLatitude(),

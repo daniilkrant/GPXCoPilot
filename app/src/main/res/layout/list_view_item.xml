@@ -76,7 +76,7 @@
                 android:layout_weight="2"
                 android:orientation="vertical"
                 android:id="@+id/point_name_descr_layout"
-                android:visibility="gone">
+                android:visibility="visible">
 
                 <LinearLayout
                     android:id="@+id/point_name_layout"
@@ -127,7 +127,7 @@
                         android:maxLines="1"
                         android:scrollHorizontally="true"
                         android:singleLine="true"
-                        android:text="Point descr Point descrPoint descrPoint descrPoint descrPoint descrPoint descrPoint descrPoint descrPoint descrPoint descrPoint descrPoint descrPoint descrPoint descrPoint descrPoint descr"
+                        android:text="Point descr"
                         android:textSize="14sp" />
                 </LinearLayout>
 
