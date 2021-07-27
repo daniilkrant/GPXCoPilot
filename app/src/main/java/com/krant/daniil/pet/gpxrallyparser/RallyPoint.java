@@ -7,19 +7,23 @@ public class RallyPoint {
     private final double mLongitude;
     private final int mDistance;
     private final int mElevation;
+    private String mName = "";
+    private String mDescription = "";
     private final Turn mTurn;
     private String mHint;
     private boolean mIsFirst;
     private boolean mIsLast;
 
-
-    public RallyPoint(int id, double latitude, double longitude, int distance, int elevation, Turn turn) {
+    public RallyPoint(int id, double latitude, double longitude, int distance, int elevation,
+                      String descr, String name, Turn turn) {
         this.mId = id;
         this.mLatitude = latitude;
         this.mLongitude = longitude;
         this.mDistance = distance;
         this.mElevation = elevation;
         this.mTurn = turn;
+        this.mDescription = descr;
+        this.mName = name;
     }
 
     public double getLatitude() {

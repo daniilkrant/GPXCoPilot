@@ -49,7 +49,7 @@ public class GPXDataRoutine {
 
     public boolean parseGpx(InputStream inputStream) {
         try {
-            mParsedGpx = mParser.parse(inputStream); // TODO: Run in bckg
+            mParsedGpx = mParser.parse(inputStream);
             if (mParsedGpx.getRoutes().size() != 0) {
                 mIsRoutesFound = true;
             }
@@ -85,6 +85,7 @@ public class GPXDataRoutine {
         RallyPoint first = new RallyPoint(0, trackPoints.get(0).getLatitude(),
                 trackPoints.get(0).getLongitude(),
                 0, 0,
+                trackPoints.get(0).getDesc(), trackPoints.get(0).getName(),
                 new Turn(180, Turn.Direction.RIGHT));
         first.setIsFirst(true);
         first.setHint(mLexicalProcessor.getHint(first));
@@ -102,15 +103,19 @@ public class GPXDataRoutine {
 
             RallyPoint rallyPoint = new RallyPoint(i, trackPoints.get(i).getLatitude(),
                     trackPoints.get(i).getLongitude(), pointDistance, pointElevation,
+                    trackPoints.get(i).getDesc(), trackPoints.get(i).getName(),
                     new Turn(turnAngle, turnDirection));
             rallyPoint.setHint(mLexicalProcessor.getHint(rallyPoint));
             mRallyPoints.add(rallyPoint);
         }
 
-        RallyPoint last = new RallyPoint(trackPoints.size()-1,
-                trackPoints.get(trackPoints.size()-1).getLatitude(),
-                trackPoints.get(trackPoints.size()-1).getLongitude(),
+        int lastIndex = trackPoints.size() - 1;
+        RallyPoint last = new RallyPoint(lastIndex,
+                trackPoints.get(lastIndex).getLatitude(),
+                trackPoints.get(lastIndex).getLongitude(),
                 0, 0,
+                trackPoints.get(lastIndex).getDesc(),
+                trackPoints.get(lastIndex).getName(),
                 new Turn(180, Turn.Direction.RIGHT));
         last.setIsLast(true);
         last.setHint(mLexicalProcessor.getHint(last));
