@@ -2,6 +2,7 @@ package com.krant.daniil.pet.gpxrallyparser.ui.main.fragment.map;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.speech.tts.TextToSpeech;
 import android.view.LayoutInflater;
@@ -19,6 +20,7 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.android.material.snackbar.Snackbar;
 import com.krant.daniil.pet.gpxrallyparser.GPXDataRoutine;
 import com.krant.daniil.pet.gpxrallyparser.MainActivity;
@@ -98,19 +100,24 @@ public class MapViewFragment extends Fragment implements OnMapReadyCallback,
     private void addMarkersToMap(ArrayList<RallyPoint> rallyPoints) {
         mMap.clear();
         mRallyPoints = rallyPoints;
+        PolylineOptions pOptions = new PolylineOptions()
+                .width(5)
+                .color(Color.RED)
+                .geodesic(true);
+
         for (int i = 0; i < rallyPoints.size(); i++) {
             RallyPoint rp = rallyPoints.get(i);
             LatLng point = new LatLng(rp.getLatitude(), rp.getLongitude());
             String title = addIdToMarkerTitle(rp.getHint(), rp.getId());
             BitmapDescriptor color;
             if (rp.isFirst()) {
-                Bitmap imageBitmap= BitmapFactory.decodeResource(getResources(),
+                Bitmap imageBitmap = BitmapFactory.decodeResource(getResources(),
                         R.drawable.start_marker);
                 Bitmap resized = Bitmap.createScaledBitmap(imageBitmap, 150, 150, true);
 
                 color = BitmapDescriptorFactory.fromBitmap(resized);
             } else if (rp.isLast()) {
-                Bitmap imageBitmap= BitmapFactory.decodeResource(getResources(),
+                Bitmap imageBitmap = BitmapFactory.decodeResource(getResources(),
                         R.drawable.finish_marker);
                 Bitmap resized = Bitmap.createScaledBitmap(imageBitmap, 150, 150, true);
 
@@ -124,8 +131,10 @@ public class MapViewFragment extends Fragment implements OnMapReadyCallback,
                     .icon(color));
             marker.setTag(rp.getId());
             mMarkers.add(marker);
-        }
 
+            pOptions.add(point);
+        }
+        mMap.addPolyline(pOptions);
     }
 
     @Override
