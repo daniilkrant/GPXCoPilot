@@ -18,4 +18,6 @@
     <string name="finish">Фініш</string>
     <string name="start">Старт</string>
     <string name="turn_direction_forward">Прямо</string>
+    <string name="point_description">"Коментар: "</string>
+    <string name="point_name">"Назва: "</string>
 </resources>

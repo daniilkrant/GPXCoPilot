@@ -4,19 +4,20 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/card_view"
     android:layout_width="match_parent"
-    android:layout_height="100dp"
+    android:layout_height="160dp"
     android:layout_margin="8dp"
     android:layout_marginBottom="0dp"
     card_view:cardCornerRadius="4dp">
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="100dp"
+        android:layout_height="wrap_content"
         android:padding="8dp">
 
         <LinearLayout
             android:layout_width="0dp"
             android:layout_height="match_parent"
+            android:layout_margin="4dp"
             android:layout_weight="1"
             android:orientation="vertical">
 
@@ -41,6 +42,7 @@
         <LinearLayout
             android:layout_width="0dp"
             android:layout_height="match_parent"
+            android:layout_margin="4dp"
             android:layout_weight="5"
             android:orientation="vertical">
 
@@ -49,23 +51,87 @@
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
                 android:layout_weight="1"
+                android:autoSizeTextType="uniform"
                 android:gravity="center"
                 android:padding="2dp"
                 android:text="48.732875464484096, -3.444574708119035"
                 android:textColor="@color/gray"
-                android:textSize="12sp"
-                android:autoSizeTextType="uniform" />
+                android:textSize="12sp" />
 
             <TextView
                 android:id="@+id/turn_hint"
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
                 android:layout_weight="2"
+                android:autoSizeTextType="uniform"
                 android:gravity="center"
                 android:padding="2dp"
                 android:text="left, twenty, up ten"
                 android:textColor="@color/black"
-                android:textSize="22sp" />
+                android:textSize="12sp" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="2"
+                android:orientation="vertical"
+                android:id="@+id/point_name_descr_layout"
+                android:visibility="gone">
+
+                <LinearLayout
+                    android:id="@+id/point_name_layout"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="1"
+                    android:orientation="horizontal"
+                    android:visibility="gone">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/point_name"
+                        android:textSize="14sp" />
+
+                    <TextView
+                        android:id="@+id/point_name"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:ellipsize="marquee"
+                        android:scrollHorizontally="true"
+                        android:text="Name"
+                        android:textSize="14sp" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/point_descr_layout"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="1"
+                    android:orientation="horizontal"
+                    android:visibility="gone">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/point_description"
+                        android:textSize="14sp" />
+
+                    <TextView
+                        android:id="@+id/point_descr"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:ellipsize="marquee"
+                        android:focusable="true"
+                        android:focusableInTouchMode="true"
+                        android:marqueeRepeatLimit="marquee_forever"
+                        android:maxLines="1"
+                        android:scrollHorizontally="true"
+                        android:singleLine="true"
+                        android:text="Point descr Point descrPoint descrPoint descrPoint descrPoint descrPoint descrPoint descrPoint descrPoint descrPoint descrPoint descrPoint descrPoint descrPoint descrPoint descrPoint descr"
+                        android:textSize="14sp" />
+                </LinearLayout>
+
+            </LinearLayout>
         </LinearLayout>
     </LinearLayout>
 </androidx.cardview.widget.CardView>

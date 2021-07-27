@@ -8,7 +8,7 @@
     <string name="tab_text_1">List</string>
     <string name="tab_text_2">Map</string>
     <string name="tts_not_ready">TTS not ready</string>
-    <string name="activity_title">Your track</string>
+    <string name="activity_title">Your route</string>
     <string name="file_not_found">File cannot be found</string>
     <string name="visual_open_hint">Choose a .gpx file and get a personal co-pilot in your phone!</string>
     <string name="file_not_parsed">File cannot be parsed</string>
@@ -19,4 +19,6 @@
     <string name="finish">Finish</string>
     <string name="start">Start</string>
     <string name="turn_direction_forward">Forward</string>
+    <string name="point_description">"Description: "</string>
+    <string name="point_name">"Name: "</string>
 </resources>

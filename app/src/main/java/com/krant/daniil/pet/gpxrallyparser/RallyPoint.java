@@ -56,6 +56,15 @@ public class RallyPoint {
         return mHint;
     }
 
+    public String getDescription() {
+        return mDescription;
+    }
+
+    public String getName() {
+        return mName;
+    }
+
+
     public void setHint(String hint) {
         this.mHint = hint;
     }
