@@ -120,7 +120,7 @@ public class MainActivity extends AppCompatActivity {
 
         public ParseTask(Uri filePath) {
             mFilePath = filePath;
-            mProgress = new ProgressDialog(MainActivity.this);
+            mProgress = new ProgressDialog(MainActivity.this, R.style.AppCompatAlertDialogStyle);
         }
 
         @Override

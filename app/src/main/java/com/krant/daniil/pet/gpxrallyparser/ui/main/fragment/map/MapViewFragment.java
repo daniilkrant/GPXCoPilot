@@ -12,6 +12,7 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptor;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
@@ -94,11 +95,16 @@ public class MapViewFragment extends Fragment implements OnMapReadyCallback,
         for (RallyPoint rp : rallyPoints) {
             LatLng point = new LatLng(rp.getLatitude(), rp.getLongitude());
             String title = addIdToMarkerTitle(rp.getHint(), rp.getId());
+            BitmapDescriptor color;
+            if (isFirst) {
+                color = BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN);
+            } else {
+                color = BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED);
+            }
             Marker marker = mMap.addMarker(new MarkerOptions()
                     .position(point)
                     .title(title)
-                    .icon( isFirst ? BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN)
-                            : BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED)));
+                    .icon(color));
             isFirst = false;
             marker.setTag(rp.getId());
         }
