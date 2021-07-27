@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.FrameLayout;
@@ -28,44 +29,48 @@ import java.io.InputStream;
 
 public class MainActivity extends AppCompatActivity {
 
-    private ActivityMainBinding binding;
+    private ActivityMainBinding mBinding;
     private ViewPager mViewPager;
     private TabLayout mTabs;
     private FrameLayout mOpenFileHintLayout;
     private FloatingActionButton mFab;
     private ShowMap mShowMapGoToMarker;
     private static ZoomToMarker mZoomToMarker;
+    private boolean mIsRedrawActivity = true;
 
     private static final int PICKFILE_RESULT_CODE = 42;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        binding = ActivityMainBinding.inflate(getLayoutInflater());
-        setContentView(binding.getRoot());
 
         mShowMapGoToMarker = new ShowMap();
-
         GPXDataRoutine.setContext(getApplicationContext());
-        mFab = binding.fab;
-        mViewPager = binding.viewPager;
-        mTabs = binding.tabs;
-        mOpenFileHintLayout = binding.openHintLayout;
-        Button chooseFileButton = binding.chooseFileButton;
-        TextView authorText = binding.author;
-
-        chooseFileButton.setOnClickListener(new OpenFileClickListener());
-        mFab.setOnClickListener(new OpenFileClickListener());
-        authorText.setOnClickListener(view -> {
-            Intent browserIntent = new Intent(Intent.ACTION_VIEW,
-                    Uri.parse("https://www.linkedin.com/in/daniilkrant/"));
-            startActivity(browserIntent);
-        });
     }
 
     @Override
     protected void onResume() {
         super.onResume();
+        if (mIsRedrawActivity) {
+            mBinding = ActivityMainBinding.inflate(getLayoutInflater());
+            setContentView(mBinding.getRoot());
+
+            mFab = mBinding.fab;
+            mViewPager = mBinding.viewPager;
+            mTabs = mBinding.tabs;
+            mOpenFileHintLayout = mBinding.openHintLayout;
+            Button chooseFileButton = mBinding.chooseFileButton;
+            TextView authorText = mBinding.author;
+
+            chooseFileButton.setOnClickListener(new OpenFileClickListener());
+            mFab.setOnClickListener(new OpenFileClickListener());
+            authorText.setOnClickListener(view -> {
+                Intent browserIntent = new Intent(Intent.ACTION_VIEW,
+                        Uri.parse("https://www.linkedin.com/in/daniilkrant/"));
+                startActivity(browserIntent);
+            });
+            mIsRedrawActivity = false;
+        }
     }
 
     @Override
@@ -75,6 +80,8 @@ public class MainActivity extends AppCompatActivity {
         if (requestCode == PICKFILE_RESULT_CODE && resultCode == RESULT_OK) {
             Uri filePath = data.getData();
             new ParseTask(filePath).execute();
+        } else {
+            mIsRedrawActivity = true;
         }
     }
 
@@ -93,7 +100,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void showError(String error) {
-        Snackbar.make(binding.viewPager, error,
+        Snackbar.make(mBinding.viewPager, error,
                 Snackbar.LENGTH_LONG).show();
     }
 
