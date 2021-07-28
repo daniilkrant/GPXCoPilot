@@ -153,7 +153,7 @@ public class MapViewFragment extends Fragment implements OnMapReadyCallback,
         mMarkers.get(number).showInfoWindow();
     }
 
-    private void followMarker(int number) {
+    private void follow(int number) {
         mMarkers.get(number).showInfoWindow();
         String textToSpeech = removeIDFromMarkerTitle(mMarkers.get(number).getTitle());
         textToSpeech(textToSpeech);
@@ -166,7 +166,7 @@ public class MapViewFragment extends Fragment implements OnMapReadyCallback,
             RallyPoint nearestPoint = GPXDataRoutine.getInstance().getNearestRallyPoint(location.getLatitude(),
                     location.getLongitude());
             Log.e("Log", nearestPoint.toString());
-            followMarker(nearestPoint.getId());
+            follow(nearestPoint.getId());
         }
     }
 

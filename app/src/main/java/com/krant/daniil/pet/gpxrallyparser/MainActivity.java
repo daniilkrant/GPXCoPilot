@@ -30,13 +30,16 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.krant.daniil.pet.gpxrallyparser.databinding.ActivityMainBinding;
 import com.krant.daniil.pet.gpxrallyparser.ui.fragment.SectionsPagerAdapter;
 import com.krant.daniil.pet.gpxrallyparser.ui.fragment.list.ListItemClicked;
+import com.krant.daniil.pet.gpxrallyparser.ui.fragment.list.ListViewFragment;
 import com.krant.daniil.pet.gpxrallyparser.ui.fragment.list.ListViewItemHolder;
+import com.krant.daniil.pet.gpxrallyparser.ui.fragment.map.MapViewFragment;
 import com.krant.daniil.pet.gpxrallyparser.ui.fragment.map.RouteFollowingListener;
 import com.krant.daniil.pet.gpxrallyparser.ui.fragment.map.ZoomToMarker;
 
 import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 
 public class MainActivity extends AppCompatActivity implements LocationListener {
@@ -49,7 +52,7 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
     private FloatingActionButton mStartLocationTrackFab;
     private RequestShowMarkerOnMap mShowMapGoToMarker;
     private static ZoomToMarker mZoomToMarker;
-    private static HashSet<RouteFollowingListener> mRouteFollowingListeners;
+    private static HashMap<String, RouteFollowingListener> mRouteFollowingListeners;
     private boolean mIsRedrawActivityNeeded = true;
     private LocationManager mLocationManager;
     private boolean mVoiceFollowingEnabled = false;
@@ -67,7 +70,7 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        mRouteFollowingListeners = new HashSet<>();
+        mRouteFollowingListeners = new HashMap<>();
         requestPermissions(LOCATION_PERMS, LOCATION_REQUEST);
         mShowMapGoToMarker = new RequestShowMarkerOnMap();
         mLocationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
@@ -100,19 +103,21 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
             mStartLocationTrackFab.setOnClickListener(view -> {
                 requestPermissions(LOCATION_PERMS, LOCATION_REQUEST);
                 mVoiceFollowingEnabled = !mVoiceFollowingEnabled;
-                for (RouteFollowingListener listener : mRouteFollowingListeners) {
+                try {
                     if (mVoiceFollowingEnabled) {
                         mStartLocationTrackFab.setImageResource(android.R.drawable.ic_media_pause);
-                        listener.startVoiceFollowing();
+                        getCurrentRouteFollowerListener().startVoiceFollowing();
                     } else {
                         mStartLocationTrackFab.setImageResource(android.R.drawable.ic_media_play);
-                        listener.stopVoiceFollowing();
+                        getCurrentRouteFollowerListener().stopVoiceFollowing();
                     }
+                } catch (NullPointerException npe) {
+                    npe.printStackTrace();
                 }
-            });
-            mIsRedrawActivityNeeded = false;
-        }
+        });
+        mIsRedrawActivityNeeded = false;
     }
+}
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -173,85 +178,92 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
     }
 
     public static void addLocationChangedListener(RouteFollowingListener routeFollowingListener) {
-        mRouteFollowingListeners.add(routeFollowingListener);
+        mRouteFollowingListeners.put(routeFollowingListener.getClass().getSimpleName(),
+                routeFollowingListener);
     }
 
     public static void removeLocationChangedListener(RouteFollowingListener routeFollowingListener) {
-        mRouteFollowingListeners.remove(routeFollowingListener);
+        mRouteFollowingListeners.remove(routeFollowingListener.getClass().getSimpleName());
+    }
+
+    private RouteFollowingListener getCurrentRouteFollowerListener() {
+        if (mTabs.getSelectedTabPosition() == 0) {
+            return mRouteFollowingListeners.get(ListViewFragment.class.getSimpleName());
+        } else return mRouteFollowingListeners.get(MapViewFragment.class.getSimpleName());
     }
 
     @Override
     public void onLocationChanged(@NonNull Location location) {
-        for (RouteFollowingListener listener : mRouteFollowingListeners) {
-            listener.onLocationObtained(location);
+        if (getCurrentRouteFollowerListener() != null) {
+            getCurrentRouteFollowerListener().onLocationObtained(location);
         }
     }
 
 
-    class OpenFileClickListener implements View.OnClickListener {
-        @Override
-        public void onClick(View view) {
-            Intent chooseFile = new Intent(Intent.ACTION_GET_CONTENT);
-            chooseFile.setType("*/*");
-            chooseFile = Intent.createChooser(chooseFile, "Choose a file");
-            startActivityForResult(chooseFile, PICKFILE_RESULT_CODE);
-        }
+class OpenFileClickListener implements View.OnClickListener {
+    @Override
+    public void onClick(View view) {
+        Intent chooseFile = new Intent(Intent.ACTION_GET_CONTENT);
+        chooseFile.setType("*/*");
+        chooseFile = Intent.createChooser(chooseFile, "Choose a file");
+        startActivityForResult(chooseFile, PICKFILE_RESULT_CODE);
+    }
+}
+
+class ParseTask extends AsyncTask<Void, Void, Boolean> {
+    Uri mFilePath;
+    ProgressDialog mProgress;
+    SectionsPagerAdapter mSectionsPagerAdapter;
+
+    public ParseTask(Uri filePath) {
+        mFilePath = filePath;
+        mProgress = new ProgressDialog(MainActivity.this, R.style.AppCompatAlertDialogStyle);
     }
 
-    class ParseTask extends AsyncTask<Void, Void, Boolean> {
-        Uri mFilePath;
-        ProgressDialog mProgress;
-        SectionsPagerAdapter mSectionsPagerAdapter;
-
-        public ParseTask(Uri filePath) {
-            mFilePath = filePath;
-            mProgress = new ProgressDialog(MainActivity.this, R.style.AppCompatAlertDialogStyle);
-        }
-
-        @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
-            mProgress.setTitle(getApplicationContext().getString(R.string.loading_title));
-            mProgress.setMessage(getApplicationContext().getString(R.string.loading_text));
-            mProgress.setCancelable(false);
-            mProgress.show();
-        }
-
-        @Override
-        protected Boolean doInBackground(Void... voids) {
-            boolean res = parseFile(mFilePath);
-            if (res) {
-                mSectionsPagerAdapter = new SectionsPagerAdapter(
-                        MainActivity.this, getSupportFragmentManager());
-            }
-            return res;
-        }
-
-        @Override
-        protected void onPostExecute(Boolean result) {
-            if (result) {
-                mViewPager.setAdapter(mSectionsPagerAdapter);
-                mTabs.setupWithViewPager(mViewPager);
-                ListViewItemHolder.setListItemClicked(mShowMapGoToMarker);
-                showUI();
-            } else {
-                showError(getApplicationContext().getString(R.string.file_not_parsed));
-            }
-            mProgress.cancel();
-        }
+    @Override
+    protected void onPreExecute() {
+        super.onPreExecute();
+        mProgress.setTitle(getApplicationContext().getString(R.string.loading_title));
+        mProgress.setMessage(getApplicationContext().getString(R.string.loading_text));
+        mProgress.setCancelable(false);
+        mProgress.show();
     }
 
-    class RequestShowMarkerOnMap implements ListItemClicked {
+    @Override
+    protected Boolean doInBackground(Void... voids) {
+        boolean res = parseFile(mFilePath);
+        if (res) {
+            mSectionsPagerAdapter = new SectionsPagerAdapter(
+                    MainActivity.this, getSupportFragmentManager());
+        }
+        return res;
+    }
 
-        @Override
-        public void itemClicked(int position) {
-            TabLayout.Tab mapTab = mTabs.getTabAt(1);
-            mTabs.selectTab(mapTab);
-            if (mZoomToMarker != null) {
-                mZoomToMarker.zoomToMarker(position);
-            }
+    @Override
+    protected void onPostExecute(Boolean result) {
+        if (result) {
+            mViewPager.setAdapter(mSectionsPagerAdapter);
+            mTabs.setupWithViewPager(mViewPager);
+            ListViewItemHolder.setListItemClicked(mShowMapGoToMarker);
+            showUI();
+        } else {
+            showError(getApplicationContext().getString(R.string.file_not_parsed));
+        }
+        mProgress.cancel();
+    }
+}
+
+class RequestShowMarkerOnMap implements ListItemClicked {
+
+    @Override
+    public void itemClicked(int position) {
+        TabLayout.Tab mapTab = mTabs.getTabAt(1);
+        mTabs.selectTab(mapTab);
+        if (mZoomToMarker != null) {
+            mZoomToMarker.zoomToMarker(position);
         }
     }
+}
 
 
 }
