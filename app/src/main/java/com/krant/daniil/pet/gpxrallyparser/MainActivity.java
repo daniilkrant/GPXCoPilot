@@ -55,7 +55,7 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
     private boolean mVoiceFollowingEnabled = false;
 
     private static final int PICKFILE_RESULT_CODE = 42;
-    private static final long LOCATION_UPDATE_TIMEOUT_MS = 2000;
+    private static final long LOCATION_UPDATE_TIMEOUT_MS = 4000;
     private final static int LOCATION_REQUEST = 4242;
     private static final String[] LOCATION_PERMS = {
             Manifest.permission.ACCESS_FINE_LOCATION,
@@ -173,7 +173,6 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
     }
 
     public static void addLocationChangedListener(RouteFollowingListener routeFollowingListener) {
-        Log.e("Log", "add");
         mRouteFollowingListeners.add(routeFollowingListener);
     }
 

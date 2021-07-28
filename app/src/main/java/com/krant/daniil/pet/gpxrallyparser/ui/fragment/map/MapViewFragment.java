@@ -155,6 +155,8 @@ public class MapViewFragment extends Fragment implements OnMapReadyCallback,
 
     private void followMarker(int number) {
         mMarkers.get(number).showInfoWindow();
+        String textToSpeech = removeIDFromMarkerTitle(mMarkers.get(number).getTitle());
+        textToSpeech(textToSpeech);
     }
 
     @Override
