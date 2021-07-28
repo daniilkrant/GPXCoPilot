@@ -141,4 +141,43 @@
         android:layout_marginBottom="145dp"
         android:visibility="gone"
         app:srcCompat="@android:drawable/ic_lock_silent_mode_off" />
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/filter_fab"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentBottom="true"
+        android:layout_gravity="bottom|end"
+        android:layout_marginEnd="@dimen/fab_margin"
+        android:layout_marginBottom="210dp"
+        android:visibility="gone"
+        app:srcCompat="@drawable/ic_baseline_filter_alt_24" />
+
+    <androidx.cardview.widget.CardView
+        xmlns:card_view="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/slider_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_marginStart="24dp"
+        android:layout_marginEnd="80dp"
+        android:layout_marginBottom="20dp"
+        app:cardBackgroundColor="@color/light_blue"
+        card_view:cardCornerRadius="16dp"
+        android:visibility="gone">
+        <com.google.android.material.slider.Slider
+            android:id="@+id/filter_slider"
+            android:layout_width="match_parent"
+            android:layout_height="100dp"
+            android:layout_gravity="center"
+            android:stepSize="1"
+            android:translationZ="100dp"
+            android:layout_marginEnd="16dp"
+            android:layout_marginStart="16dp"
+            android:valueFrom="1"
+            android:valueTo="10" />
+
+    </androidx.cardview.widget.CardView>
+
 </RelativeLayout>

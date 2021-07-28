@@ -1,6 +1,5 @@
 package com.krant.daniil.pet.gpxrallyparser;
 
-import android.content.Context;
 import android.util.Log;
 
 import org.xmlpull.v1.XmlPullParserException;
@@ -8,6 +7,7 @@ import org.xmlpull.v1.XmlPullParserException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 
 import io.ticofab.androidgpxparser.parser.GPXParser;
@@ -23,17 +23,22 @@ import io.ticofab.androidgpxparser.parser.domain.TrackSegment;
 public class GPXDataRoutine {
 
     static GPXDataRoutine instance;
-    private static Context mContext;
     private final GPXParser mParser = new GPXParser();
     private Gpx mParsedGpx;
-    private List<RallyPoint> mRallyPoints;
+    private List<RallyPoint> mParsedRallyPoints;
+    private List<RallyPoint> mFilteredRallyPoints;
     private boolean mIsTracksFound = false;
     private boolean mIsRoutesFound = false;
     private boolean mIsWayPointsFound = false;
-    private final LexicalProcessor mLexicalProcessor;
+    private LexicalProcessor mLexicalProcessor;
+    private static HashSet<GPXDataChangedListener> mOnDataChangedListeners;
 
     private GPXDataRoutine() {
-        mLexicalProcessor = new LexicalProcessor(mContext);
+        mOnDataChangedListeners = new HashSet<>();
+    }
+
+    public void addOnDataChangedListener(GPXDataChangedListener listener) {
+        mOnDataChangedListeners.add(listener);
     }
 
     public static synchronized GPXDataRoutine getInstance() {
@@ -43,8 +48,8 @@ public class GPXDataRoutine {
         return instance;
     }
 
-    public static void setContext(Context context) {
-        mContext = context;
+    public void setLexicalProcessor(LexicalProcessor lexicalProcessor) {
+        mLexicalProcessor = lexicalProcessor;
     }
 
     public boolean parseGpx(InputStream inputStream) {
@@ -66,11 +71,40 @@ public class GPXDataRoutine {
         return mIsRoutesFound || mIsTracksFound || mIsWayPointsFound;
     }
 
-    public List<RallyPoint> getRallyPoints() {
-        if (mRallyPoints != null) {
-            return mRallyPoints;
+    public void updateListenersWithFilteredRallyPoints(int every) {
+        List<RallyPoint> filtered = getFilteredRallyPoints(every);
+        for (GPXDataChangedListener listener: mOnDataChangedListeners) {
+            listener.onDataSetChanged(filtered);
         }
-        mRallyPoints = new ArrayList<>();
+    }
+
+    private List<RallyPoint> getFilteredRallyPoints(int every) {
+        //Not using streams here as they are only fro API N+
+        if (mParsedRallyPoints == null) {
+            mParsedRallyPoints = getRallyPoints();
+        }
+        if (every == 1) return mParsedRallyPoints;
+
+        mFilteredRallyPoints = new ArrayList<>();
+
+        // Add start
+        mFilteredRallyPoints.add(mParsedRallyPoints.get(0));
+
+        for (int i = 1; i < mParsedRallyPoints.size() - 1; i+=every) {
+            mFilteredRallyPoints.add(mParsedRallyPoints.get(i));
+        }
+
+        // Add finish
+        mFilteredRallyPoints.add(mParsedRallyPoints.get(mParsedRallyPoints.size()-1));
+
+        return mFilteredRallyPoints;
+    }
+
+    public List<RallyPoint> getRallyPoints() {
+        if (mParsedRallyPoints != null) {
+            return mParsedRallyPoints;
+        }
+        mParsedRallyPoints = new ArrayList<>();
         ArrayList<Point> trackPoints = new ArrayList<>();
         if (mIsTracksFound) {
             trackPoints.addAll(getAllTrackPoints());
@@ -91,7 +125,7 @@ public class GPXDataRoutine {
                 new Turn(180, Turn.Direction.RIGHT));
         first.setIsFirst(true);
         first.setHint(mLexicalProcessor.getHint(first));
-        mRallyPoints.add(first);
+        mParsedRallyPoints.add(first);
 
         for (int i = 1; i < trackPoints.size() - 1; i++) {
             int pointDistance = calcDistanceBtwPoints(trackPoints.get(i),
@@ -110,7 +144,7 @@ public class GPXDataRoutine {
                     trackPoints.get(i).getDesc(), trackPoints.get(i).getName(),
                     new Turn(turnAngle, turnDirection));
             rallyPoint.setHint(mLexicalProcessor.getHint(rallyPoint));
-            mRallyPoints.add(rallyPoint);
+            mParsedRallyPoints.add(rallyPoint);
         }
 
         int lastIndex = trackPoints.size() - 1;
@@ -123,13 +157,16 @@ public class GPXDataRoutine {
                 new Turn(180, Turn.Direction.RIGHT));
         last.setIsLast(true);
         last.setHint(mLexicalProcessor.getHint(last));
-        mRallyPoints.add(last);
+        mParsedRallyPoints.add(last);
 
-        return mRallyPoints;
+        mFilteredRallyPoints = mParsedRallyPoints;
+
+        return mParsedRallyPoints;
     }
 
     public void cleanRallyPoints() {
-        mRallyPoints = null;
+        mParsedRallyPoints = null;
+        mFilteredRallyPoints = null;
     }
 
     private List<RoutePoint> getAllRoutePoints() {
@@ -174,15 +211,15 @@ public class GPXDataRoutine {
     }
 
     public RallyPoint getNearestRallyPoint(double from_lat, double from_lon) {
-        RallyPoint nearest = mRallyPoints.get(0);
+        RallyPoint nearest = mFilteredRallyPoints.get(0);
         int nearest_dist = calcDistanceBtwPoints(from_lat, nearest.getLatitude(),
                 from_lon, nearest.getLongitude());
-        for (int i = 1; i < mRallyPoints.size(); i++) {
-            int dist = calcDistanceBtwPoints(from_lat, mRallyPoints.get(i).getLatitude(),
-                    from_lon, mRallyPoints.get(i).getLongitude());
+        for (int i = 1; i < mFilteredRallyPoints.size(); i++) {
+            int dist = calcDistanceBtwPoints(from_lat, mFilteredRallyPoints.get(i).getLatitude(),
+                    from_lon, mFilteredRallyPoints.get(i).getLongitude());
             if (dist < nearest_dist) {
                 nearest_dist = dist;
-                nearest = mRallyPoints.get(i);
+                nearest = mFilteredRallyPoints.get(i);
             }
         }
         return nearest;
@@ -228,7 +265,8 @@ public class GPXDataRoutine {
         int distance = 0;
         try {
             distance = calcElevationBtwPoints(tp1.getElevation(), tp2.getElevation());
-        } catch (NullPointerException e) { }
+        } catch (NullPointerException e) {
+        }
         return distance;
     }
 

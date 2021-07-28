@@ -20,4 +20,8 @@
     <string name="turn_direction_forward">Прямо</string>
     <string name="point_description">"Описание: "</string>
     <string name="point_name">"Название: "</string>
+    <string name="open_file_fab_tooltip">Открыть новый GPX файл</string>
+    <string name="enable_location_fab_tooltip">Начать сопровождение на основании геолокации</string>
+    <string name="enable_sound_fab_tooltip">Включить аудиосопровождение</string>
+    <string name="filter_fab_tooltip">Показать каждый N поворот</string>
 </resources>

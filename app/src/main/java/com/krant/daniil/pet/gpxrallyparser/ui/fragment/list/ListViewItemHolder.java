@@ -75,7 +75,7 @@ public class ListViewItemHolder extends RecyclerView.ViewHolder implements View.
     @Override
     public void onClick(View view) {
         if (mListItemClicked != null) {
-            mListItemClicked.itemClicked(getLayoutPosition());
+            mListItemClicked.itemClicked(Integer.parseInt((String) mTurnId.getText()));
         }
     }
 }

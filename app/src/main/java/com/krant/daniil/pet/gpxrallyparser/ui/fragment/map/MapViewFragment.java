@@ -32,13 +32,15 @@ import com.krant.daniil.pet.gpxrallyparser.ui.fragment.FollowFragment;
 import com.krant.daniil.pet.gpxrallyparser.ui.fragment.RouteFollowingListener;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 
 public class MapViewFragment extends FollowFragment implements OnMapReadyCallback,
         GoogleMap.OnMarkerClickListener, ZoomToMarker, RouteFollowingListener {
 
     private final static String TITLE_ID_DELIM = ": ";
     private GoogleMap mMap;
-    private final ArrayList<Marker> mMarkers = new ArrayList<>();
+    private HashMap<Integer, Marker> mIdMarkers;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -59,9 +61,9 @@ public class MapViewFragment extends FollowFragment implements OnMapReadyCallbac
         initSpeech();
         MainActivity.setZoomToMarker(this);
         MainActivity.addLocationChangedListener(this);
-        ArrayList<RallyPoint> rallyPoints = new ArrayList<>();
+        GPXDataRoutine.getInstance().addOnDataChangedListener(this);
         try {
-            rallyPoints = new ArrayList<>(GPXDataRoutine.getInstance().getRallyPoints());
+            mRallyPoints = new ArrayList<>(GPXDataRoutine.getInstance().getRallyPoints());
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -69,14 +71,15 @@ public class MapViewFragment extends FollowFragment implements OnMapReadyCallbac
         mMap = googleMap;
         mMap.setMapType(GoogleMap.MAP_TYPE_TERRAIN);
 
-        mMap.setInfoWindowAdapter(new MarkerWindowAdapter(this, rallyPoints));
-        addMarkersToMap(rallyPoints);
+        mMap.setInfoWindowAdapter(new MarkerWindowAdapter(this, mRallyPoints));
+        addMarkersToMap();
 
         mMap.setOnMarkerClickListener(this);
-        mMap.moveCamera(CameraUpdateFactory.
-                newLatLngZoom(new LatLng(rallyPoints.get(0).getLatitude(),
-                        rallyPoints.get(0).getLongitude()), 18));
-
+        if (mRallyPoints.size() > 0) {
+            mMap.moveCamera(CameraUpdateFactory.
+                    newLatLngZoom(new LatLng(mRallyPoints.get(0).getLatitude(),
+                            mRallyPoints.get(0).getLongitude()), 18));
+        }
     }
 
     @Override
@@ -95,16 +98,16 @@ public class MapViewFragment extends FollowFragment implements OnMapReadyCallbac
         return title.substring(title.indexOf(TITLE_ID_DELIM) + TITLE_ID_DELIM.length());
     }
 
-    private void addMarkersToMap(ArrayList<RallyPoint> rallyPoints) {
+    private void addMarkersToMap() {
+        mIdMarkers = new HashMap<>();
         mMap.clear();
-        mRallyPoints = rallyPoints;
         PolylineOptions pOptions = new PolylineOptions()
                 .width(5)
                 .color(Color.RED)
                 .geodesic(true);
 
-        for (int i = 0; i < rallyPoints.size(); i++) {
-            RallyPoint rp = rallyPoints.get(i);
+        for (int i = 0; i < mRallyPoints.size(); i++) {
+            RallyPoint rp = mRallyPoints.get(i);
             LatLng point = new LatLng(rp.getLatitude(), rp.getLongitude());
             String title = addIdToMarkerTitle(rp.getHint(), rp.getId());
             BitmapDescriptor color;
@@ -132,7 +135,7 @@ public class MapViewFragment extends FollowFragment implements OnMapReadyCallbac
                     .icon(color)
                     .zIndex(zIndex));
             marker.setTag(rp.getId());
-            mMarkers.add(marker);
+            mIdMarkers.put(rp.getId(), marker);
 
             pOptions.add(point);
         }
@@ -142,16 +145,15 @@ public class MapViewFragment extends FollowFragment implements OnMapReadyCallbac
     @Override
     public void zoomToMarker(int number) {
         mMap.moveCamera(CameraUpdateFactory.
-                newLatLngZoom(new LatLng(mRallyPoints.get(number).getLatitude(),
-                        mRallyPoints.get(number).getLongitude()), 20));
-        mMarkers.get(number).showInfoWindow();
+                newLatLngZoom(mIdMarkers.get(number).getPosition(), 20));
+        mIdMarkers.get(number).showInfoWindow();
     }
 
     @Override
     public void follow(int number) {
-        mMarkers.get(number).showInfoWindow();
-        String textToSpeech = removeIDFromMarkerTitle(mMarkers.get(number).getTitle());
+        mIdMarkers.get(number).showInfoWindow();
         if (mIsVoiceActivated) {
+            String textToSpeech = removeIDFromMarkerTitle(mIdMarkers.get(number).getTitle());
             textToSpeech(textToSpeech);
         }
     }
@@ -167,8 +169,13 @@ public class MapViewFragment extends FollowFragment implements OnMapReadyCallbac
         if (mIsFollowingActivated) {
             RallyPoint nearestPoint = GPXDataRoutine.getInstance().getNearestRallyPoint(location.getLatitude(),
                     location.getLongitude());
-            Log.e("Log", nearestPoint.toString());
             follow(nearestPoint.getId());
         }
+    }
+
+    @Override
+    public void onDataSetChanged(List<RallyPoint> newPoints) {
+        mRallyPoints = new ArrayList<>(newPoints);
+        addMarkersToMap();
     }
 }

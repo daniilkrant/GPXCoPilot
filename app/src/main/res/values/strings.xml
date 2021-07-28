@@ -21,4 +21,8 @@
     <string name="point_description">"Description: "</string>
     <string name="point_name">"Name: "</string>
     <string name="title_activity_main" translatable="false">GPXCoPilot</string>
+    <string name="open_file_fab_tooltip">Open new GPX file</string>
+    <string name="enable_location_fab_tooltip">Enable location following</string>
+    <string name="enable_sound_fab_tooltip">Enable text to speech following</string>
+    <string name="filter_fab_tooltip">Show every N turn</string>
 </resources>

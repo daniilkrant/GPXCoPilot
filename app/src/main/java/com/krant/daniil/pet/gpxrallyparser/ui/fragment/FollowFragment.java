@@ -5,13 +5,14 @@ import android.view.View;
 import androidx.fragment.app.Fragment;
 
 import com.google.android.material.snackbar.Snackbar;
+import com.krant.daniil.pet.gpxrallyparser.GPXDataChangedListener;
 import com.krant.daniil.pet.gpxrallyparser.R;
 import com.krant.daniil.pet.gpxrallyparser.RallyPoint;
 import com.krant.daniil.pet.gpxrallyparser.SpeechProcessor;
 
 import java.util.ArrayList;
 
-public abstract class FollowFragment extends Fragment implements RouteFollowingListener {
+public abstract class FollowFragment extends Fragment implements RouteFollowingListener, GPXDataChangedListener {
     protected boolean mIsFollowingActivated = false;
     protected boolean mIsVoiceActivated = false;
     protected SpeechProcessor mSpeechProcessor;

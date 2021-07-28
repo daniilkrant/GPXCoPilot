@@ -12,16 +12,20 @@ import android.location.LocationManager;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.TextView;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.android.material.slider.Slider;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.tabs.TabLayout;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.widget.TooltipCompat;
+import androidx.cardview.widget.CardView;
 import androidx.core.content.ContextCompat;
 import androidx.viewpager.widget.ViewPager;
 import androidx.appcompat.app.AppCompatActivity;
@@ -34,6 +38,8 @@ import com.krant.daniil.pet.gpxrallyparser.ui.fragment.list.ListViewItemHolder;
 import com.krant.daniil.pet.gpxrallyparser.ui.fragment.map.MapViewFragment;
 import com.krant.daniil.pet.gpxrallyparser.ui.fragment.RouteFollowingListener;
 import com.krant.daniil.pet.gpxrallyparser.ui.fragment.map.ZoomToMarker;
+
+import org.jetbrains.annotations.NotNull;
 
 import java.io.FileNotFoundException;
 import java.io.InputStream;
@@ -48,6 +54,9 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
     private FloatingActionButton mOpenFileFab;
     private FloatingActionButton mStartLocationTrackFab;
     private FloatingActionButton mEnableDisableSoundFab;
+    private FloatingActionButton mOpenFilterFab;
+    private Slider mFilterSlider;
+    private CardView mSliderLayout;
     private RequestShowMarkerOnMap mShowMapGoToMarker;
     private static ZoomToMarker mZoomToMarker;
     private static HashMap<String, RouteFollowingListener> mRouteFollowingListeners;
@@ -56,6 +65,7 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
     private boolean mFollowingEnabled = false;
     private boolean mVoiceEnabled = false;
     private boolean mFileOpened = false;
+    private boolean mFilterOpened = false;
 
     private static final int PICKFILE_RESULT_CODE = 42;
     private static final long LOCATION_UPDATE_TIMEOUT_MS = 4000;
@@ -74,7 +84,8 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
         requestPermissions(LOCATION_PERMS, LOCATION_REQUEST);
         mShowMapGoToMarker = new RequestShowMarkerOnMap();
         mLocationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-        GPXDataRoutine.setContext(getApplicationContext());
+        LexicalProcessor lexicalProcessor = new LexicalProcessor(getApplicationContext());
+        GPXDataRoutine.getInstance().setLexicalProcessor(lexicalProcessor);
     }
 
     @Override
@@ -90,8 +101,16 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
             mOpenFileHintLayout = mBinding.openHintLayout;
             mStartLocationTrackFab = mBinding.startLocationFab;
             mEnableDisableSoundFab = mBinding.enableSoundFab;
+            mOpenFilterFab = mBinding.filterFab;
+            mFilterSlider = mBinding.filterSlider;
+            mSliderLayout = mBinding.sliderLayout;
             Button chooseFileButton = mBinding.chooseFileButton;
             TextView authorText = mBinding.author;
+
+            TooltipCompat.setTooltipText(mOpenFileFab, getString(R.string.open_file_fab_tooltip));
+            TooltipCompat.setTooltipText(mStartLocationTrackFab,getString(R.string.enable_location_fab_tooltip));
+            TooltipCompat.setTooltipText(mEnableDisableSoundFab,getString(R.string.enable_sound_fab_tooltip));
+            TooltipCompat.setTooltipText(mOpenFilterFab,getString(R.string.filter_fab_tooltip));
 
             chooseFileButton.setOnClickListener(new OpenFileClickListener());
             mOpenFileFab.setOnClickListener(new OpenFileClickListener());
@@ -127,6 +146,30 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
                     notifyListenerVoiceStatusChange(mVoiceEnabled);
                 } catch (NullPointerException npe) {
                     npe.printStackTrace();
+                }
+            });
+
+            mOpenFilterFab.setOnClickListener(view -> {
+                mFilterOpened = !mFilterOpened;
+                if (mFilterOpened) {
+                    mSliderLayout.setVisibility(View.VISIBLE);
+                } else {
+                    mSliderLayout.setVisibility(View.GONE);
+                }
+
+            });
+
+            mFilterSlider.addOnSliderTouchListener(new Slider.OnSliderTouchListener() {
+                @Override
+                public void onStartTrackingTouch(@NonNull @NotNull Slider slider) {
+
+                }
+
+                @Override
+                public void onStopTrackingTouch(@NonNull @NotNull Slider slider) {
+                    GPXDataRoutine.getInstance().
+                            updateListenersWithFilteredRallyPoints((int) slider.getValue());
+                    Log.e("Log", slider.getValue() + "");
                 }
             });
             mIsRedrawActivityNeeded = false;
@@ -186,6 +229,7 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
         mOpenFileFab.setVisibility(View.VISIBLE);
         mStartLocationTrackFab.setVisibility(View.VISIBLE);
         mEnableDisableSoundFab.setVisibility(View.VISIBLE);
+        mOpenFilterFab.setVisibility(View.VISIBLE);
         mFileOpened = true;
     }
 

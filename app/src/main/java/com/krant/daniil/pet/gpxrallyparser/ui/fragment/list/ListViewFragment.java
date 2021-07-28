@@ -20,6 +20,7 @@ import com.krant.daniil.pet.gpxrallyparser.ui.fragment.FollowFragment;
 import com.krant.daniil.pet.gpxrallyparser.ui.fragment.RouteFollowingListener;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class ListViewFragment extends FollowFragment implements RouteFollowingListener {
 
@@ -32,6 +33,7 @@ public class ListViewFragment extends FollowFragment implements RouteFollowingLi
 
         initSpeech();
         MainActivity.addLocationChangedListener(this);
+        GPXDataRoutine.getInstance().addOnDataChangedListener(this);
 
         mRootView = inflater.inflate(R.layout.fragment_list, container, false);
         mRallyPoints = new ArrayList<>(GPXDataRoutine.getInstance().getRallyPoints());
@@ -45,9 +47,14 @@ public class ListViewFragment extends FollowFragment implements RouteFollowingLi
 
     @Override
     public void follow(int number) {
-        mRecyclerView.smoothScrollToPosition(number);
-        if (mIsVoiceActivated) {
-            textToSpeech(mRallyPoints.get(number).getHint());
+        for (int  i =0; i < mRallyPoints.size(); i++) {
+            RallyPoint rp = mRallyPoints.get(i);
+            if (rp.getId() == number) {
+                mRecyclerView.smoothScrollToPosition(i);
+                if (mIsVoiceActivated) {
+                    textToSpeech(mRallyPoints.get(i).getHint());
+                }
+            }
         }
     }
 
@@ -66,5 +73,9 @@ public class ListViewFragment extends FollowFragment implements RouteFollowingLi
         }
     }
 
-
+    @Override
+    public void onDataSetChanged(List<RallyPoint> newPoints) {
+        mRallyPoints = new ArrayList<>(newPoints);
+        mRecyclerView.setAdapter(new RallyPointsListAdapter(mRallyPoints, getContext()));
+    }
 }
