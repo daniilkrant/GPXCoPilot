@@ -16,17 +16,13 @@ import com.krant.daniil.pet.gpxrallyparser.MainActivity;
 import com.krant.daniil.pet.gpxrallyparser.R;
 import com.krant.daniil.pet.gpxrallyparser.RallyPoint;
 import com.krant.daniil.pet.gpxrallyparser.SpeechProcessor;
+import com.krant.daniil.pet.gpxrallyparser.ui.fragment.FollowFragment;
 import com.krant.daniil.pet.gpxrallyparser.ui.fragment.RouteFollowingListener;
 
 import java.util.ArrayList;
 
-public class ListViewFragment extends Fragment implements RouteFollowingListener {
+public class ListViewFragment extends FollowFragment implements RouteFollowingListener {
 
-    private ArrayList<RallyPoint> mRallyPoints;
-    private View rootView;
-    private boolean mIsFollowingActivated = false;
-    private boolean mIsVoiceActivated = false;
-    private SpeechProcessor mSpeechProcessor;
     private RecyclerView mRecyclerView;
 
     @Override
@@ -34,31 +30,30 @@ public class ListViewFragment extends Fragment implements RouteFollowingListener
             LayoutInflater inflater, ViewGroup container,
             Bundle savedInstanceState) {
 
-        mSpeechProcessor = new SpeechProcessor(getContext());
+        initSpeech();
         MainActivity.addLocationChangedListener(this);
 
-        rootView = inflater.inflate(R.layout.fragment_list, container, false);
+        mRootView = inflater.inflate(R.layout.fragment_list, container, false);
         mRallyPoints = new ArrayList<>(GPXDataRoutine.getInstance().getRallyPoints());
-        mRecyclerView = rootView.findViewById(R.id.recyclerview);
+        mRecyclerView = mRootView.findViewById(R.id.recyclerview);
         mRecyclerView.setHasFixedSize(true);
-        mRecyclerView.setLayoutManager(new TopLayoutManager(rootView.getContext()));
+        mRecyclerView.setLayoutManager(new TopLayoutManager(mRootView.getContext()));
         mRecyclerView.setAdapter(new RallyPointsListAdapter(mRallyPoints, getContext()));
 
-        return rootView;
+        return mRootView;
     }
 
-    public void textToSpeech(String text) {
-        if (!mSpeechProcessor.textToSpeech(text)) {
-            Snackbar.make(rootView, getContext().getString(R.string.tts_not_ready),
-                    Snackbar.LENGTH_LONG).show();
-        }
-    }
-
-    private void follow(int number) {
+    @Override
+    public void follow(int number) {
         mRecyclerView.smoothScrollToPosition(number);
         if (mIsVoiceActivated) {
             textToSpeech(mRallyPoints.get(number).getHint());
         }
+    }
+
+    @Override
+    public void initSpeech() {
+        mSpeechProcessor = new SpeechProcessor(getContext());
     }
 
     @Override
@@ -71,23 +66,5 @@ public class ListViewFragment extends Fragment implements RouteFollowingListener
         }
     }
 
-    @Override
-    public void startFollowing() {
-        mIsFollowingActivated = true;
-    }
 
-    @Override
-    public void stopFollowing() {
-        mIsFollowingActivated = false;
-    }
-
-    @Override
-    public void onSoundEnabled() {
-        mIsVoiceActivated = true;
-    }
-
-    @Override
-    public void onSoundDisabled() {
-        mIsVoiceActivated = false;
-    }
 }

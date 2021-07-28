@@ -28,25 +28,21 @@ import com.krant.daniil.pet.gpxrallyparser.MainActivity;
 import com.krant.daniil.pet.gpxrallyparser.R;
 import com.krant.daniil.pet.gpxrallyparser.RallyPoint;
 import com.krant.daniil.pet.gpxrallyparser.SpeechProcessor;
+import com.krant.daniil.pet.gpxrallyparser.ui.fragment.FollowFragment;
 import com.krant.daniil.pet.gpxrallyparser.ui.fragment.RouteFollowingListener;
 
 import java.util.ArrayList;
 
-public class MapViewFragment extends Fragment implements OnMapReadyCallback,
+public class MapViewFragment extends FollowFragment implements OnMapReadyCallback,
         GoogleMap.OnMarkerClickListener, ZoomToMarker, RouteFollowingListener {
 
     private final static String TITLE_ID_DELIM = ": ";
     private GoogleMap mMap;
-    private SpeechProcessor mSpeechProcessor;
-    private View rootView;
-    private ArrayList<RallyPoint> mRallyPoints;
     private final ArrayList<Marker> mMarkers = new ArrayList<>();
-    private boolean mIsFollowingActivated = false;
-    private boolean mIsVoiceActivated = false;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        rootView = inflater.inflate(R.layout.fragment_map, container, false);
+        mRootView = inflater.inflate(R.layout.fragment_map, container, false);
 
         mSpeechProcessor = new SpeechProcessor(getContext());
 
@@ -55,11 +51,12 @@ public class MapViewFragment extends Fragment implements OnMapReadyCallback,
         if (mapFragment != null) {
             mapFragment.getMapAsync(this);
         }
-        return rootView;
+        return mRootView;
     }
 
     @Override
     public void onMapReady(GoogleMap googleMap) {
+        initSpeech();
         MainActivity.setZoomToMarker(this);
         MainActivity.addLocationChangedListener(this);
         ArrayList<RallyPoint> rallyPoints = new ArrayList<>();
@@ -82,16 +79,11 @@ public class MapViewFragment extends Fragment implements OnMapReadyCallback,
 
     }
 
-    public void textToSpeech(String text) {
-        if (!mSpeechProcessor.textToSpeech(text)) {
-            Snackbar.make(rootView, getContext().getString(R.string.tts_not_ready),
-                    Snackbar.LENGTH_LONG).show();
-        }
-    }
-
     @Override
     public boolean onMarkerClick(Marker marker) {
-        textToSpeech(removeIDFromMarkerTitle(marker.getTitle()));
+        if (mIsVoiceActivated) {
+            textToSpeech(removeIDFromMarkerTitle(marker.getTitle()));
+        }
         return false;
     }
 
@@ -155,12 +147,18 @@ public class MapViewFragment extends Fragment implements OnMapReadyCallback,
         mMarkers.get(number).showInfoWindow();
     }
 
-    private void follow(int number) {
+    @Override
+    public void follow(int number) {
         mMarkers.get(number).showInfoWindow();
         String textToSpeech = removeIDFromMarkerTitle(mMarkers.get(number).getTitle());
         if (mIsVoiceActivated) {
             textToSpeech(textToSpeech);
         }
+    }
+
+    @Override
+    public void initSpeech() {
+        mSpeechProcessor = new SpeechProcessor(getContext());
     }
 
     @Override
@@ -172,27 +170,5 @@ public class MapViewFragment extends Fragment implements OnMapReadyCallback,
             Log.e("Log", nearestPoint.toString());
             follow(nearestPoint.getId());
         }
-    }
-
-    @Override
-    public void startFollowing() {
-        mIsFollowingActivated = true;
-        Log.e("MAP", "startVoiceFollowing");
-    }
-
-    @Override
-    public void stopFollowing() {
-        mIsFollowingActivated = false;
-        Log.e("MAP", "stopVoiceFollowing");
-    }
-
-    @Override
-    public void onSoundEnabled() {
-        mIsVoiceActivated = true;
-    }
-
-    @Override
-    public void onSoundDisabled() {
-        mIsVoiceActivated = false;
     }
 }

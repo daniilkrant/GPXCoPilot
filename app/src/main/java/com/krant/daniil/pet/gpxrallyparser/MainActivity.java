@@ -114,6 +114,8 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
                 } catch (NullPointerException npe) {
                     npe.printStackTrace();
                 }
+            });
+
             mEnableDisableSoundFab.setOnClickListener(view1 -> {
                 mVoiceEnabled = !mVoiceEnabled;
                 try {
@@ -127,10 +129,9 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
                     npe.printStackTrace();
                 }
             });
-        });
-        mIsRedrawActivityNeeded = false;
+            mIsRedrawActivityNeeded = false;
+        }
     }
-}
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -208,7 +209,7 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
     }
 
     private void notifyListenerFollowStatusChange(boolean isStart) {
-        for (String key: mRouteFollowingListeners.keySet()) {
+        for (String key : mRouteFollowingListeners.keySet()) {
             if (isStart) {
                 mRouteFollowingListeners.get(key).startFollowing();
             } else {
@@ -218,7 +219,7 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
     }
 
     private void notifyListenerVoiceStatusChange(boolean isEnabled) {
-        for (String key: mRouteFollowingListeners.keySet()) {
+        for (String key : mRouteFollowingListeners.keySet()) {
             if (isEnabled) {
                 mRouteFollowingListeners.get(key).onSoundEnabled();
             } else {
@@ -237,70 +238,70 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
     }
 
 
-class OpenFileClickListener implements View.OnClickListener {
-    @Override
-    public void onClick(View view) {
-        Intent chooseFile = new Intent(Intent.ACTION_GET_CONTENT);
-        chooseFile.setType("*/*");
-        chooseFile = Intent.createChooser(chooseFile, "Choose a file");
-        startActivityForResult(chooseFile, PICKFILE_RESULT_CODE);
-    }
-}
-
-class ParseTask extends AsyncTask<Void, Void, Boolean> {
-    Uri mFilePath;
-    ProgressDialog mProgress;
-    SectionsPagerAdapter mSectionsPagerAdapter;
-
-    public ParseTask(Uri filePath) {
-        mFilePath = filePath;
-        mProgress = new ProgressDialog(MainActivity.this, R.style.AppCompatAlertDialogStyle);
-    }
-
-    @Override
-    protected void onPreExecute() {
-        super.onPreExecute();
-        mProgress.setTitle(getApplicationContext().getString(R.string.loading_title));
-        mProgress.setMessage(getApplicationContext().getString(R.string.loading_text));
-        mProgress.setCancelable(false);
-        mProgress.show();
-    }
-
-    @Override
-    protected Boolean doInBackground(Void... voids) {
-        boolean res = parseFile(mFilePath);
-        if (res) {
-            mSectionsPagerAdapter = new SectionsPagerAdapter(
-                    MainActivity.this, getSupportFragmentManager());
-        }
-        return res;
-    }
-
-    @Override
-    protected void onPostExecute(Boolean result) {
-        if (result) {
-            mViewPager.setAdapter(mSectionsPagerAdapter);
-            mTabs.setupWithViewPager(mViewPager);
-            ListViewItemHolder.setListItemClicked(mShowMapGoToMarker);
-            showUI();
-        } else {
-            showError(getApplicationContext().getString(R.string.file_not_parsed));
-        }
-        mProgress.cancel();
-    }
-}
-
-class RequestShowMarkerOnMap implements ListItemClicked {
-
-    @Override
-    public void itemClicked(int position) {
-        TabLayout.Tab mapTab = mTabs.getTabAt(1);
-        mTabs.selectTab(mapTab);
-        if (mZoomToMarker != null) {
-            mZoomToMarker.zoomToMarker(position);
+    class OpenFileClickListener implements View.OnClickListener {
+        @Override
+        public void onClick(View view) {
+            Intent chooseFile = new Intent(Intent.ACTION_GET_CONTENT);
+            chooseFile.setType("*/*");
+            chooseFile = Intent.createChooser(chooseFile, "Choose a file");
+            startActivityForResult(chooseFile, PICKFILE_RESULT_CODE);
         }
     }
-}
+
+    class ParseTask extends AsyncTask<Void, Void, Boolean> {
+        Uri mFilePath;
+        ProgressDialog mProgress;
+        SectionsPagerAdapter mSectionsPagerAdapter;
+
+        public ParseTask(Uri filePath) {
+            mFilePath = filePath;
+            mProgress = new ProgressDialog(MainActivity.this, R.style.AppCompatAlertDialogStyle);
+        }
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            mProgress.setTitle(getApplicationContext().getString(R.string.loading_title));
+            mProgress.setMessage(getApplicationContext().getString(R.string.loading_text));
+            mProgress.setCancelable(false);
+            mProgress.show();
+        }
+
+        @Override
+        protected Boolean doInBackground(Void... voids) {
+            boolean res = parseFile(mFilePath);
+            if (res) {
+                mSectionsPagerAdapter = new SectionsPagerAdapter(
+                        MainActivity.this, getSupportFragmentManager());
+            }
+            return res;
+        }
+
+        @Override
+        protected void onPostExecute(Boolean result) {
+            if (result) {
+                mViewPager.setAdapter(mSectionsPagerAdapter);
+                mTabs.setupWithViewPager(mViewPager);
+                ListViewItemHolder.setListItemClicked(mShowMapGoToMarker);
+                showUI();
+            } else {
+                showError(getApplicationContext().getString(R.string.file_not_parsed));
+            }
+            mProgress.cancel();
+        }
+    }
+
+    class RequestShowMarkerOnMap implements ListItemClicked {
+
+        @Override
+        public void itemClicked(int position) {
+            TabLayout.Tab mapTab = mTabs.getTabAt(1);
+            mTabs.selectTab(mapTab);
+            if (mZoomToMarker != null) {
+                mZoomToMarker.zoomToMarker(position);
+            }
+        }
+    }
 
 
 }
