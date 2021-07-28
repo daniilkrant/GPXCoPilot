@@ -12,7 +12,6 @@ import android.location.LocationManager;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.FrameLayout;
@@ -33,14 +32,12 @@ import com.krant.daniil.pet.gpxrallyparser.ui.fragment.list.ListItemClicked;
 import com.krant.daniil.pet.gpxrallyparser.ui.fragment.list.ListViewFragment;
 import com.krant.daniil.pet.gpxrallyparser.ui.fragment.list.ListViewItemHolder;
 import com.krant.daniil.pet.gpxrallyparser.ui.fragment.map.MapViewFragment;
-import com.krant.daniil.pet.gpxrallyparser.ui.fragment.map.RouteFollowingListener;
+import com.krant.daniil.pet.gpxrallyparser.ui.fragment.RouteFollowingListener;
 import com.krant.daniil.pet.gpxrallyparser.ui.fragment.map.ZoomToMarker;
 
 import java.io.FileNotFoundException;
 import java.io.InputStream;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 
 public class MainActivity extends AppCompatActivity implements LocationListener {
 
@@ -50,12 +47,14 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
     private FrameLayout mOpenFileHintLayout;
     private FloatingActionButton mOpenFileFab;
     private FloatingActionButton mStartLocationTrackFab;
+    private FloatingActionButton mEnableDisableSoundFab;
     private RequestShowMarkerOnMap mShowMapGoToMarker;
     private static ZoomToMarker mZoomToMarker;
     private static HashMap<String, RouteFollowingListener> mRouteFollowingListeners;
     private boolean mIsRedrawActivityNeeded = true;
     private LocationManager mLocationManager;
-    private boolean mVoiceFollowingEnabled = false;
+    private boolean mFollowingEnabled = false;
+    private boolean mVoiceEnabled = false;
     private boolean mFileOpened = false;
 
     private static final int PICKFILE_RESULT_CODE = 42;
@@ -90,6 +89,7 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
             mTabs = mBinding.tabs;
             mOpenFileHintLayout = mBinding.openHintLayout;
             mStartLocationTrackFab = mBinding.startLocationFab;
+            mEnableDisableSoundFab = mBinding.enableSoundFab;
             Button chooseFileButton = mBinding.chooseFileButton;
             TextView authorText = mBinding.author;
 
@@ -103,17 +103,30 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
             mStartLocationTrackFab = findViewById(R.id.start_location_fab);
             mStartLocationTrackFab.setOnClickListener(view -> {
                 requestPermissions(LOCATION_PERMS, LOCATION_REQUEST);
-                mVoiceFollowingEnabled = !mVoiceFollowingEnabled;
+                mFollowingEnabled = !mFollowingEnabled;
                 try {
-                    if (mVoiceFollowingEnabled) {
+                    if (mFollowingEnabled) {
                         mStartLocationTrackFab.setImageResource(android.R.drawable.ic_media_pause);
                     } else {
                         mStartLocationTrackFab.setImageResource(android.R.drawable.ic_media_play);
                     }
-                    notifyFollowerListenerStatusChange(mVoiceFollowingEnabled);
+                    notifyListenerFollowStatusChange(mFollowingEnabled);
                 } catch (NullPointerException npe) {
                     npe.printStackTrace();
                 }
+            mEnableDisableSoundFab.setOnClickListener(view1 -> {
+                mVoiceEnabled = !mVoiceEnabled;
+                try {
+                    if (mVoiceEnabled) {
+                        mEnableDisableSoundFab.setImageResource(android.R.drawable.ic_lock_silent_mode);
+                    } else {
+                        mEnableDisableSoundFab.setImageResource(android.R.drawable.ic_lock_silent_mode_off);
+                    }
+                    notifyListenerVoiceStatusChange(mVoiceEnabled);
+                } catch (NullPointerException npe) {
+                    npe.printStackTrace();
+                }
+            });
         });
         mIsRedrawActivityNeeded = false;
     }
@@ -171,6 +184,7 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
         mOpenFileHintLayout.setVisibility(View.GONE);
         mOpenFileFab.setVisibility(View.VISIBLE);
         mStartLocationTrackFab.setVisibility(View.VISIBLE);
+        mEnableDisableSoundFab.setVisibility(View.VISIBLE);
         mFileOpened = true;
     }
 
@@ -193,12 +207,22 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
         } else return mRouteFollowingListeners.get(MapViewFragment.class.getSimpleName());
     }
 
-    private void notifyFollowerListenerStatusChange(boolean isStart) {
+    private void notifyListenerFollowStatusChange(boolean isStart) {
         for (String key: mRouteFollowingListeners.keySet()) {
             if (isStart) {
-                mRouteFollowingListeners.get(key).startVoiceFollowing();
+                mRouteFollowingListeners.get(key).startFollowing();
             } else {
-                mRouteFollowingListeners.get(key).stopVoiceFollowing();
+                mRouteFollowingListeners.get(key).stopFollowing();
+            }
+        }
+    }
+
+    private void notifyListenerVoiceStatusChange(boolean isEnabled) {
+        for (String key: mRouteFollowingListeners.keySet()) {
+            if (isEnabled) {
+                mRouteFollowingListeners.get(key).onSoundEnabled();
+            } else {
+                mRouteFollowingListeners.get(key).onSoundDisabled();
             }
         }
     }

@@ -8,17 +8,15 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import androidx.fragment.app.Fragment;
-import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.google.android.gms.maps.model.Marker;
 import com.google.android.material.snackbar.Snackbar;
 import com.krant.daniil.pet.gpxrallyparser.GPXDataRoutine;
 import com.krant.daniil.pet.gpxrallyparser.MainActivity;
 import com.krant.daniil.pet.gpxrallyparser.R;
 import com.krant.daniil.pet.gpxrallyparser.RallyPoint;
 import com.krant.daniil.pet.gpxrallyparser.SpeechProcessor;
-import com.krant.daniil.pet.gpxrallyparser.ui.fragment.map.RouteFollowingListener;
+import com.krant.daniil.pet.gpxrallyparser.ui.fragment.RouteFollowingListener;
 
 import java.util.ArrayList;
 
@@ -27,6 +25,7 @@ public class ListViewFragment extends Fragment implements RouteFollowingListener
     private ArrayList<RallyPoint> mRallyPoints;
     private View rootView;
     private boolean mIsFollowingActivated = false;
+    private boolean mIsVoiceActivated = false;
     private SpeechProcessor mSpeechProcessor;
     private RecyclerView mRecyclerView;
 
@@ -57,7 +56,9 @@ public class ListViewFragment extends Fragment implements RouteFollowingListener
 
     private void follow(int number) {
         mRecyclerView.smoothScrollToPosition(number);
-        textToSpeech(mRallyPoints.get(number).getHint());
+        if (mIsVoiceActivated) {
+            textToSpeech(mRallyPoints.get(number).getHint());
+        }
     }
 
     @Override
@@ -71,12 +72,22 @@ public class ListViewFragment extends Fragment implements RouteFollowingListener
     }
 
     @Override
-    public void startVoiceFollowing() {
+    public void startFollowing() {
         mIsFollowingActivated = true;
     }
 
     @Override
-    public void stopVoiceFollowing() {
+    public void stopFollowing() {
         mIsFollowingActivated = false;
+    }
+
+    @Override
+    public void onSoundEnabled() {
+        mIsVoiceActivated = true;
+    }
+
+    @Override
+    public void onSoundDisabled() {
+        mIsVoiceActivated = false;
     }
 }
