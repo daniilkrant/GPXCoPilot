@@ -56,6 +56,7 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
     private boolean mIsRedrawActivityNeeded = true;
     private LocationManager mLocationManager;
     private boolean mVoiceFollowingEnabled = false;
+    private boolean mFileOpened = false;
 
     private static final int PICKFILE_RESULT_CODE = 42;
     private static final long LOCATION_UPDATE_TIMEOUT_MS = 4000;
@@ -106,11 +107,10 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
                 try {
                     if (mVoiceFollowingEnabled) {
                         mStartLocationTrackFab.setImageResource(android.R.drawable.ic_media_pause);
-                        getCurrentRouteFollowerListener().startVoiceFollowing();
                     } else {
                         mStartLocationTrackFab.setImageResource(android.R.drawable.ic_media_play);
-                        getCurrentRouteFollowerListener().stopVoiceFollowing();
                     }
+                    notifyFollowerListenerStatusChange(mVoiceFollowingEnabled);
                 } catch (NullPointerException npe) {
                     npe.printStackTrace();
                 }
@@ -171,6 +171,7 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
         mOpenFileHintLayout.setVisibility(View.GONE);
         mOpenFileFab.setVisibility(View.VISIBLE);
         mStartLocationTrackFab.setVisibility(View.VISIBLE);
+        mFileOpened = true;
     }
 
     public static void setZoomToMarker(ZoomToMarker zoomToMarker) {
@@ -192,10 +193,22 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
         } else return mRouteFollowingListeners.get(MapViewFragment.class.getSimpleName());
     }
 
+    private void notifyFollowerListenerStatusChange(boolean isStart) {
+        for (String key: mRouteFollowingListeners.keySet()) {
+            if (isStart) {
+                mRouteFollowingListeners.get(key).startVoiceFollowing();
+            } else {
+                mRouteFollowingListeners.get(key).stopVoiceFollowing();
+            }
+        }
+    }
+
     @Override
     public void onLocationChanged(@NonNull Location location) {
-        if (getCurrentRouteFollowerListener() != null) {
-            getCurrentRouteFollowerListener().onLocationObtained(location);
+        if (mFileOpened) {
+            if (getCurrentRouteFollowerListener() != null) {
+                getCurrentRouteFollowerListener().onLocationObtained(location);
+            }
         }
     }
 
