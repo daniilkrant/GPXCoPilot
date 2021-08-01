@@ -9,7 +9,7 @@ public class Turn {
     public Turn(int angle, Direction direction) {
         this.mAngle = angle;
         this.mDirection = direction;
-        mMeasure = countHint();
+        mMeasure = countMeasure();
     }
 
     public int getAngle() {
@@ -20,7 +20,7 @@ public class Turn {
         return mDirection;
     }
 
-    private int countHint() {
+    private int countMeasure() {
         if ((mAngle <= 180) && (mAngle > 175)) return 0;
         if ((mAngle <= 175) && (mAngle > 170)) return 1;
         if ((mAngle <= 170) && (mAngle > 160)) return 2;

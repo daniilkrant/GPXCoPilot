@@ -39,7 +39,7 @@ public class ListViewItemHolder extends RecyclerView.ViewHolder implements View.
         mPointNameLayout = itemView.findViewById(R.id.point_name_layout);
         mPointDescrLayout = itemView.findViewById(R.id.point_descr_layout);
         mPointDescr = itemView.findViewById(R.id.point_descr);
-        mPointName= itemView.findViewById(R.id.point_name);
+        mPointName = itemView.findViewById(R.id.point_name);
         itemView.findViewById(R.id.point_descr).setSelected(true);
     }
 
@@ -60,11 +60,7 @@ public class ListViewItemHolder extends RecyclerView.ViewHolder implements View.
             mPointNameDescrLayout.setVisibility(View.VISIBLE);
         }
 
-        if (rallyPoint.getTurn().getDirection() == Turn.Direction.RIGHT) {
-            mTurnDirection.setImageDrawable(ContextCompat.getDrawable(mContext, R.drawable.right_turn));
-        } else {
-            mTurnDirection.setImageDrawable(ContextCompat.getDrawable(mContext, R.drawable.left_turn));
-        }
+        mTurnDirection.setImageDrawable(ContextCompat.getDrawable(mContext, rallyPoint.getDirectionImageDrawableId()));
     }
 
 

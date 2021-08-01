@@ -64,7 +64,6 @@ public class RallyPoint {
         return mName;
     }
 
-
     public void setHint(String hint) {
         this.mHint = hint;
     }
@@ -79,6 +78,31 @@ public class RallyPoint {
 
     public void setIsLast(boolean is) {
         this.mIsLast = is;
+    }
+
+    public int getDirectionImageDrawableId() {
+        if (getTurn().getDirection() == Turn.Direction.RIGHT) {
+            if ((mTurn.getMeasure() >= 0) && (mTurn.getMeasure() < 5)) {
+                return R.drawable.right_turn;
+            }
+            if ((mTurn.getMeasure() >= 5) && (mTurn.getMeasure() <= 6)) {
+                return R.drawable.right_turn_90;
+            }
+            if (mTurn.getMeasure() == 7) {
+                return R.drawable.sharp_right_turn;
+            }
+        } else if (getTurn().getDirection() == Turn.Direction.LEFT) {
+            if ((mTurn.getMeasure() >= 0) && (mTurn.getMeasure() < 5)) {
+                return R.drawable.left_turn;
+            }
+            if ((mTurn.getMeasure() >= 5) && (mTurn.getMeasure() <= 6)) {
+                return R.drawable.left_turn_90;
+            }
+            if (mTurn.getMeasure() == 7) {
+                return R.drawable.left_turn_sharp;
+            }
+        }
+        return R.drawable.turn_straight;
     }
 
     @Override

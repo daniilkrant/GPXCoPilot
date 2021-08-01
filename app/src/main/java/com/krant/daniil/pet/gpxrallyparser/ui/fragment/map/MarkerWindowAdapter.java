@@ -22,7 +22,11 @@ public class MarkerWindowAdapter implements GoogleMap.InfoWindowAdapter {
     private TextView mTurnHint;
     private ImageView mTurnDirection;
 
-    private MarkerWindowAdapter() {};
+    private MarkerWindowAdapter() {
+    }
+
+    ;
+
     public MarkerWindowAdapter(Fragment mFragment, List<RallyPoint> rallyPoints) {
         this.mFragment = mFragment;
         this.mRallyPoints = rallyPoints;
@@ -41,13 +45,8 @@ public class MarkerWindowAdapter implements GoogleMap.InfoWindowAdapter {
     public void fillView(View v, RallyPoint rallyPoint) {
         mTurnId.setText(Integer.toString(rallyPoint.getId()));
         mTurnHint.setText(rallyPoint.getHint());
-        if (rallyPoint.getTurn().getDirection() == Turn.Direction.RIGHT) {
-            mTurnDirection.setImageDrawable(
-                    ContextCompat.getDrawable(mFragment.getContext(), R.drawable.right_turn));
-        } else {
-            mTurnDirection.setImageDrawable(
-                    ContextCompat.getDrawable(mFragment.getContext(), R.drawable.left_turn));
-        }
+        mTurnDirection.setImageDrawable(
+                ContextCompat.getDrawable(mFragment.getContext(), rallyPoint.getDirectionImageDrawableId()));
     }
 
     @Override
